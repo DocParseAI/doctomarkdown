@@ -1,6 +1,15 @@
 from abc import ABC, abstractmethod
-from typing import Optional, Dict, Any, Union
+from typing import Optional, Dict, Any, Union, List
 import os
+
+class PageResult:
+    def __init__(self, page_number: int, page_content: str):
+        self.page_number = page_number
+        self.page_content = page_content
+
+class ConversionResult:
+    def __init__(self, pages: List[PageResult]):
+        self.pages = pages
 
 class BaseConverter(ABC):
     def __init__(
@@ -35,8 +44,10 @@ class BaseConverter(ABC):
             f.write(content)
         return output_file
     
-    def convert(self) -> str:
-        """Main Entry point for conversion"""
-        markdown = self.extract_content()
-        return self.save_markdown(markdown)
+    def convert(self):
+        pages = self.extract_content()  # List[PageResult]
+        # Save markdown only if output_path is provided
+        if self.output_path:
+            self.save_markdown(self._markdown)
+        return ConversionResult(pages)
 

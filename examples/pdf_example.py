@@ -1,11 +1,12 @@
 from doctomarkdown.factory import convert_to_markdown
 
-output_path = convert_to_markdown(
+result = convert_to_markdown(
     filepath="examples/sample_docs/sample.pdf",
     use_llm=False,
-    extract_images=False,
-    extract_tables=False,
-    output_path = "markdown_output"
+    extract_images=True,
+    extract_tables=True,
+    output_path="markdown_output"
 )
 
-print(f"Markdown saved at: {output_path}")
+for page in result.pages:
+    print(f"Page Number: {page.page_number} | Page Content: {page.page_content}")
