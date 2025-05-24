@@ -4,7 +4,7 @@ setup(
     name='doctomarkdown',
     version='0.1',
     packages=find_packages(),
-    author='docverseai',
+    author='docparseai',
     install_requires = [
         'PyMuPDF'
     ],
