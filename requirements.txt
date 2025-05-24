@@ -1,0 +1,3 @@
+PyMyPDF
+Pillow
+typing-extensions
