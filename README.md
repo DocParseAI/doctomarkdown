@@ -30,7 +30,7 @@ Clone the repository and install in editable mode:
 
 ```bash
 # Clone the repository
-$ git clone <your-repo-url>
+$ git clone https://github.com/DocParseAI/doctomarkdown.git
 $ cd doctomarkdown
 
 # Install dependencies
@@ -40,7 +40,7 @@ $ pip install -r requirements.txt
 $ pip install -e .
 ```
 
-> **Note:** Requires Python 3.7+
+> **Note:** Requires Python 3.10+
 
 ---
 
