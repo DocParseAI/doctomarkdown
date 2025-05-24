@@ -79,6 +79,36 @@ python examples/pdf_example.py
 
 ---
 
+## File Structure
+
+```
+doctomarkdown/
+├── base.py
+├── factory.py
+├── __init__.py
+├── converters/
+│   ├── pdf_to_markdown.py
+│   ├── docx_to_markdown.py
+│   ├── pptx_to_markdown.py
+│   ├── csv_to_markdown.py
+│   └── __init__.py
+├── utils/
+│   ├── markdown_helpers.py
+│   └── __init__.py
+examples/
+├── pdf_example.py
+├── sample_docs/
+│   └── sample.pdf
+markdown_output/
+├── sample.md
+setup.py
+requirements.txt
+README.md
+LICENSE
+```
+
+---
+
 ## Contributing
 
 Pull requests are welcome! For major changes, please open an issue first to discuss what you would like to change.
