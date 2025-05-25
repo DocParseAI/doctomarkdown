@@ -12,9 +12,9 @@ class PdfToMarkdown(BaseConverter):
         doc = fitz.open(self.filepath)
         pages = []
         markdown_lines = []
-        use_llm = hasattr(self, 'llm_client') and self.llm_client is not None and hasattr(self, 'llm_model') and self.llm_model is not None
-        llm_client = getattr(self, 'llm_client', None)
-        llm_model = getattr(self, 'llm_model', None)
+        use_llm = self.llm_client is not None and self.llm_model is not None
+        llm_client = self.llm_client
+        llm_model = self.llm_model
 
         for page_number, page in enumerate(doc, 1):
             text = page.get_text("text")
