@@ -6,7 +6,7 @@ class DocToMarkdown:
         self.llm_client = llm_client
         self.llm_model = llm_model
 
-    def convert_pdf_to_markdown(self, filepath: str, extract_images: bool = False, extract_tables: bool = False, output_path: Optional[str] = None, **kwargs):
+    async def convert_pdf_to_markdown(self, filepath: str, extract_images: bool = False, extract_tables: bool = False, output_path: Optional[str] = None, **kwargs):
         pdf_converter = PdfToMarkdown(
             filepath=filepath,
             llm_client=self.llm_client,
@@ -16,4 +16,4 @@ class DocToMarkdown:
             output_path=output_path,
             **kwargs
         )
-        return pdf_converter.convert()
+        return await pdf_converter.convert()

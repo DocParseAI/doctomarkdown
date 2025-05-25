@@ -48,8 +48,8 @@ class BaseConverter(ABC):
             f.write(content)
         return output_file
     
-    def convert(self):
-        pages = self.extract_content()  # List[PageResult]
+    async def convert(self):
+        pages = await self.extract_content()  # List[PageResult]
         # Save markdown only if output_path is provided
         if self.output_path:
             self.save_markdown(self._markdown)

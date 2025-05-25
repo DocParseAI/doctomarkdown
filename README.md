@@ -47,10 +47,9 @@ $ pip install -e .
 ## Usage Example
 
 ```python
-
+import asyncio
 from langchain_openai import AzureChatOpenAI
 from groq import Groq
-import os
 from doctomarkdown import DocToMarkdown
 from dotenv import load_dotenv
 load_dotenv()
@@ -62,12 +61,12 @@ client_groq = Groq(
 app = DocToMarkdown(llm_client=client_groq, 
                     llm_model='meta-llama/llama-4-scout-17b-16e-instruct')
 
-result = app.convert_pdf_to_markdown(
+result = asyncio.run(app.convert_pdf_to_markdown(
     filepath="sample_docs/sample.pdf",
     extract_images=True,
     extract_tables=True,
     output_path="markdown_output"
-)
+))
 
 for page in result.pages:
     print(f"Page Number: {page.page_number} | Page Content: {page.page_content}")
@@ -75,6 +74,7 @@ for page in result.pages:
 
 
 ```python
+import asyncio
 import google.generativeai as genai
 from doctomarkdown import DocToMarkdown
 
@@ -89,12 +89,12 @@ app = DocToMarkdown(
     llm_client=vision_model
 )
 
-result = app.convert_pdf_to_markdown(
+result = asyncio.run(app.convert_pdf_to_markdown(
     filepath="examples/sample_docs/sample.pdf",
     extract_images=True,
     extract_tables=True,
     output_path="markdown_output"
-)
+))
 ```
 
 ---
