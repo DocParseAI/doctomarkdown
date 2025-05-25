@@ -15,17 +15,19 @@ class BaseConverter(ABC):
     def __init__(
         self,
         filepath: str,
-        use_llm: bool = False,
         extract_images: bool = False,
         extract_tables: bool = False,
         output_path: Optional[str] = None,
+        llm_client: Optional[object] = None,
+        llm_model: Optional[str] = None,
         **kwargs: Any
     ):
         self.filepath = filepath
-        self.use_llm = use_llm
         self.extract_images = extract_images
         self.extract_tables = extract_tables
         self.output_path = output_path
+        self.llm_client = llm_client
+        self.llm_model = llm_model
         self.kwargs = kwargs #for future extension
     
     @abstractmethod

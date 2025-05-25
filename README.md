@@ -47,11 +47,23 @@ $ pip install -e .
 ## Usage Example
 
 ```python
-from doctomarkdown.factory import convert_to_markdown
 
-result = convert_to_markdown(
-    filepath="examples/sample_docs/sample.pdf",
-    use_llm=False,
+from langchain_openai import AzureChatOpenAI
+from groq import Groq
+import os
+from doctomarkdown import DocToMarkdown
+from dotenv import load_dotenv
+load_dotenv()
+
+client_groq = Groq(
+    api_key=os.environ.get("GROQ_API_KEY"),
+)
+
+app = DocToMarkdown(llm_client=client_groq, 
+                    llm_model='meta-llama/llama-4-scout-17b-16e-instruct')
+
+result = app.convert_pdf_to_markdown(
+    filepath="sample_docs/sample.pdf",
     extract_images=True,
     extract_tables=True,
     output_path="markdown_output"
@@ -76,6 +88,36 @@ python examples/pdf_example.py
 ## Supported File Types
 
 - PDF (more coming soon: DOCX, PPTX, CSV)
+
+---
+
+## File Structure
+
+```
+doctomarkdown/
+├── base.py
+├── factory.py
+├── __init__.py
+├── converters/
+│   ├── pdf_to_markdown.py
+│   ├── docx_to_markdown.py
+│   ├── pptx_to_markdown.py
+│   ├── csv_to_markdown.py
+│   └── __init__.py
+├── utils/
+│   ├── markdown_helpers.py
+│   └── __init__.py
+examples/
+├── pdf_example.py
+├── sample_docs/
+│   └── sample.pdf
+markdown_output/
+├── sample.md
+setup.py
+requirements.txt
+README.md
+LICENSE
+```
 
 ---
 
