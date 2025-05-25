@@ -46,19 +46,12 @@ $ pip install -e .
 
 ## Usage Example
 
+### 1. Convert PDF to Markdown (No LLM)
+
 ```python
-from langchain_openai import AzureChatOpenAI
-from groq import Groq
 from doctomarkdown import DocToMarkdown
-from dotenv import load_dotenv
-load_dotenv()
 
-client_groq = Groq(
-    api_key=os.environ.get("GROQ_API_KEY"),
-)
-
-app = DocToMarkdown(llm_client=client_groq, 
-                    llm_model='meta-llama/llama-4-scout-17b-16e-instruct')
+app = DocToMarkdown()
 
 result = app.convert_pdf_to_markdown(
     filepath="sample_docs/sample.pdf",
@@ -71,23 +64,48 @@ for page in result.pages:
     print(f"Page Number: {page.page_number} | Page Content: {page.page_content}")
 ```
 
+### 2. Convert PDF to Markdown using Groq LLM
+
+```python
+from groq import Groq
+from doctomarkdown import DocToMarkdown
+from dotenv import load_dotenv
+import os
+load_dotenv()
+
+client_groq = Groq(
+    api_key=os.environ.get("GROQ_API_KEY"),
+)
+
+app = DocToMarkdown(
+    llm_client=client_groq,
+    llm_model='meta-llama/llama-4-scout-17b-16e-instruct'
+)
+
+result = app.convert_pdf_to_markdown(
+    filepath="sample_docs/sample.pdf",
+    extract_images=True,
+    extract_tables=True,
+    output_path="markdown_output"
+)
+
+for page in result.pages:
+    print(f"Page Number: {page.page_number} | Page Content: {page.page_content}")
+```
+
+### 3. Convert PDF to Markdown using Gemini LLM
 
 ```python
 from google import genai
 from dotenv import load_dotenv
+import os
 load_dotenv()
-
-import asyncio
 import google.generativeai as genai
 from doctomarkdown import DocToMarkdown
 
-# Setup Gemini API
 genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
+vision_model = genai.GenerativeModel("gemini-1.5-flash")  # Choose your Gemini Vision model
 
-# Use Gemini Pro Vision model
-vision_model = genai.GenerativeModel("gemini-1.5-flash") # CHOOSE YOUR GOOGLE VISION MODEL
-
-# Initialize DocToMarkdown with Gemini client
 app = DocToMarkdown(
     llm_client=vision_model
 )
