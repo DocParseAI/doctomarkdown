@@ -20,6 +20,7 @@ class BaseConverter(ABC):
         output_path: Optional[str] = None,
         llm_client: Optional[object] = None,
         llm_model: Optional[str] = None,
+        llm_prompt: Optional[str] = None,
         **kwargs: Any
     ):
         self.filepath = filepath
@@ -28,6 +29,7 @@ class BaseConverter(ABC):
         self.output_path = output_path
         self.llm_client = llm_client
         self.llm_model = llm_model
+        self.llm_prompt = llm_prompt
         self.kwargs = kwargs #for future extension
     
     @abstractmethod
@@ -46,8 +48,8 @@ class BaseConverter(ABC):
             f.write(content)
         return output_file
     
-    def convert(self):
-        pages = self.extract_content()  # List[PageResult]
+    async def convert(self):
+        pages = await self.extract_content()  # List[PageResult]
         # Save markdown only if output_path is provided
         if self.output_path:
             self.save_markdown(self._markdown)
