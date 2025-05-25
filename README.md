@@ -47,11 +47,23 @@ $ pip install -e .
 ## Usage Example
 
 ```python
-from doctomarkdown.factory import convert_to_markdown
 
-result = convert_to_markdown(
-    filepath="examples/sample_docs/sample.pdf",
-    use_llm=False,
+from langchain_openai import AzureChatOpenAI
+from groq import Groq
+import os
+from doctomarkdown import DocToMarkdown
+from dotenv import load_dotenv
+load_dotenv()
+
+client_groq = Groq(
+    api_key=os.environ.get("GROQ_API_KEY"),
+)
+
+app = DocToMarkdown(llm_client=client_groq, 
+                    llm_model='meta-llama/llama-4-scout-17b-16e-instruct')
+
+result = app.convert_pdf_to_markdown(
+    filepath="sample_docs/sample.pdf",
     extract_images=True,
     extract_tables=True,
     output_path="markdown_output"
