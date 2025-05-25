@@ -47,7 +47,6 @@ $ pip install -e .
 ## Usage Example
 
 ```python
-import asyncio
 from langchain_openai import AzureChatOpenAI
 from groq import Groq
 from doctomarkdown import DocToMarkdown
@@ -61,12 +60,12 @@ client_groq = Groq(
 app = DocToMarkdown(llm_client=client_groq, 
                     llm_model='meta-llama/llama-4-scout-17b-16e-instruct')
 
-result = asyncio.run(app.convert_pdf_to_markdown(
+result = app.convert_pdf_to_markdown(
     filepath="sample_docs/sample.pdf",
     extract_images=True,
     extract_tables=True,
     output_path="markdown_output"
-))
+)
 
 for page in result.pages:
     print(f"Page Number: {page.page_number} | Page Content: {page.page_content}")
@@ -74,12 +73,16 @@ for page in result.pages:
 
 
 ```python
+from google import genai
+from dotenv import load_dotenv
+load_dotenv()
+
 import asyncio
 import google.generativeai as genai
 from doctomarkdown import DocToMarkdown
 
 # Setup Gemini API
-genai.configure(api_key=""YOUR_API_KEY")
+genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
 
 # Use Gemini Pro Vision model
 vision_model = genai.GenerativeModel("gemini-1.5-flash") # CHOOSE YOUR GOOGLE VISION MODEL
@@ -89,12 +92,15 @@ app = DocToMarkdown(
     llm_client=vision_model
 )
 
-result = asyncio.run(app.convert_pdf_to_markdown(
-    filepath="examples/sample_docs/sample.pdf",
+result = app.convert_pdf_to_markdown(
+    filepath="sample_docs/sample.pdf",
     extract_images=True,
     extract_tables=True,
     output_path="markdown_output"
-))
+)
+
+for page in result.pages:
+    print(f"Page Number: {page.page_number} | Page Content: {page.page_content}")
 ```
 
 ---
