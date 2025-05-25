@@ -73,6 +73,30 @@ for page in result.pages:
     print(f"Page Number: {page.page_number} | Page Content: {page.page_content}")
 ```
 
+
+```python
+import google.generativeai as genai
+from doctomarkdown import DocToMarkdown
+
+# Setup Gemini API
+genai.configure(api_key=""YOUR_API_KEY")
+
+# Use Gemini Pro Vision model
+vision_model = genai.GenerativeModel("gemini-1.5-flash") # CHOOSE YOUR GOOGLE VISION MODEL
+
+# Initialize DocToMarkdown with Gemini client
+app = DocToMarkdown(
+    llm_client=vision_model
+)
+
+result = app.convert_pdf_to_markdown(
+    filepath="examples/sample_docs/sample.pdf",
+    extract_images=True,
+    extract_tables=True,
+    output_path="markdown_output"
+)
+```
+
 ---
 
 ## Command Line Example

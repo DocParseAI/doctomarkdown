@@ -1,8 +1,9 @@
 from doctomarkdown.base import BaseConverter, PageResult, ConversionResult
 from typing import Optional
 import fitz #PyMuPDF
-import os
 from doctomarkdown.utils.markdown_helpers import image_bytes_to_base64
+from doctomarkdown.utils.prompts import pdf_to_markdown_system_prompt,pdf_to_markdown_user_role_prompt
+from doctomarkdown.llmwrappers import GeminiWrapper
 import logging
 
 logger = logging.getLogger(__name__)
@@ -12,9 +13,10 @@ class PdfToMarkdown(BaseConverter):
         doc = fitz.open(self.filepath)
         pages = []
         markdown_lines = []
-        use_llm = self.llm_client is not None and self.llm_model is not None
-        llm_client = self.llm_client
-        llm_model = self.llm_model
+        use_llm = hasattr(self, 'llm_client') and self.llm_client is not None and hasattr(self, 'llm_model') and self.llm_model is not None
+        user_prompt = hasattr(self, 'llm_prompt') and self.llm_prompt
+        llm_client = getattr(self, 'llm_client', None)
+        llm_model = getattr(self, 'llm_model', None)
 
         for page_number, page in enumerate(doc, 1):
             text = page.get_text("text")
@@ -24,38 +26,7 @@ class PdfToMarkdown(BaseConverter):
                 try:
                     pix = page.get_pixmap()
                     base64_image = image_bytes_to_base64(pix.tobytes())
-                    response = llm_client.chat.completions.create(
-                        model=llm_model,
-                        messages=[
-                            {
-                                "role": "system",
-                                "content": (
-                                    "You are an expert OCR-to-Markdown engine. You must extract every visible detail from images—"
-                                    "including all text, tables, headings, labels, lists, values, units, footnotes, and layout formatting. "
-                                    "Preserve the structure in markdown exactly as seen."
-                                )
-                            },
-                            {
-                                "role": "user",
-                                "content": [
-                                    {
-                                        "type": "text",
-                                        "text": (
-                                            "Extract **every single visible element** from this image into **markdown** format. "
-                                            "Preserve the hierarchy of information using appropriate markdown syntax: headings (#), subheadings (##), bold (**), lists (-), tables, etc. "
-                                            "Include all numerical data, labels, notes, and even seemingly minor text. Do not skip anything. Do not make assumptions."
-                                        )
-                                    },
-                                    {
-                                        "type": "image_url",
-                                        "image_url": {"url": f"data:image/png;base64,{base64_image}"}
-                                    }
-                                ]
-                            }
-                        ],
-                        temperature=0,
-                    )
-                    page_content = response.choices[0].message.content
+                    page_content = self.generate_markdown_from_image(base64_image)
                 except Exception as e:
                     logger.warning(f"LLM extraction failed for page {page_number}: {e}")
             pages.append(PageResult(page_number, page_content))
@@ -74,3 +45,42 @@ class PdfToMarkdown(BaseConverter):
 
         self._markdown = "\n".join(markdown_lines)
         return pages
+    
+    def generate_markdown_from_image(self, base64_image: str) -> str:
+        # a function to determine to call LLM based on user preference
+        if "gemini" in self.llm_model:
+            from PIL import Image
+            import io
+            import base64
+            # create a wrapper around gemini vision model to work as same way as groq style
+            gemini_client = GeminiWrapper(self.llm_client)
+            image_data = base64.b64decode(base64_image)
+            image = Image.open(io.BytesIO(image_data))
+
+            response = gemini_client.generate_content([
+                {"text": pdf_to_markdown_system_prompt()},
+                {"text": pdf_to_markdown_user_role_prompt()},
+                image
+            ])
+            return response.text
+
+        elif hasattr(self.llm_client, "chat"):
+            # OpenAI/Groq style
+            response = self.llm_client.chat.completions.create(
+                model=self.llm_model,
+                messages=[
+                    {"role": "system", "content": pdf_to_markdown_system_prompt()},
+                    {
+                        "role": "user",
+                        "content": [
+                            {"type": "text", "text": pdf_to_markdown_user_role_prompt()},
+                            {"type": "image_url", "image_url": {"url": f"data:image/png;base64,{base64_image}"}}
+                        ]
+                    }
+                ],
+                temperature=0,
+            )
+            return response.choices[0].message.content
+
+        else:
+            raise ValueError("Unsupported LLM client type.")

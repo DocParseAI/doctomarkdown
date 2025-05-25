@@ -1,3 +1,4 @@
 PyMuPDF
 Pillow
 typing-extensions
+google-generativeai
