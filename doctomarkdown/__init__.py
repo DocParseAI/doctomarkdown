@@ -20,7 +20,7 @@ class DocToMarkdown:
         return pdf_converter.convert()
 
     def convert_docx_to_markdown(self, filepath: str, extract_images: bool = False, extract_tables: bool = False, output_path: Optional[str] = None, **kwargs):
-        pdf_converter = DocxToMarkdown(
+        docx_converter = DocxToMarkdown(
             filepath=filepath,
             llm_client=self.llm_client,
             llm_model=self.llm_model,
@@ -29,4 +29,4 @@ class DocToMarkdown:
             output_path=output_path,
             **kwargs
         )
-        return pdf_converter.convert()
+        return docx_converter.convert()
