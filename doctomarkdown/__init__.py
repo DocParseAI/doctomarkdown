@@ -1,6 +1,7 @@
 from doctomarkdown.converters.pdf_to_markdown import PdfToMarkdown
 from doctomarkdown.converters.docx_to_markdown import DocxToMarkdown
 from doctomarkdown.converters.pptx_to_markdown import PptxToMarkdown
+from doctomarkdown.converters.csv_to_markdown import CsvToMarkdown
 from typing import Optional
 
 class DocToMarkdown:
@@ -87,3 +88,28 @@ class DocToMarkdown:
             **kwargs
         )
         return pptx_converter.convert()
+    
+    def convert_csv_to_markdown(self, filepath: str, extract_images: bool = False, extract_tables: bool = False, output_path: Optional[str] = None, **kwargs):
+        """
+        Convert a CSV file to Markdown.
+        
+        Args:
+            filepath (str): Path to the CSV file to convert.
+            extract_images (bool, optional): If True, extract images from the CSV file. Defaults to False.
+            extract_tables (bool, optional): If True, extract tables from the CSV file. Defaults to False.
+            output_path (str, optional): If provided, save the Markdown output to this path.
+            **kwargs: Additional keyword arguments passed to the converter.
+        
+        Returns:
+            ConversionResult:
+            page_number (int): The number of pages in the CSV file.
+            page_content (str): The content of the CSV file in Markdown format.
+        """
+        csv_converter = CsvToMarkdown(
+            filepath=filepath,
+            extract_images=extract_images,
+            extract_tables=extract_tables,
+            output_path=output_path,
+            **kwargs
+        )
+        return csv_converter.convert()

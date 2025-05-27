@@ -9,42 +9,32 @@
 
 # Doctomarkdown
 
-**Doctomarkdown** is a Python library to convert documents (like PDF) into clean, readable Markdown format. It supports extracting text, images, and tables, and is easily extensible for more document types.
+**Doctomarkdown** is a robust Python library for converting documents—including PDF, DOCX, PPTX, and CSV—into clean, readable Markdown. It supports extracting text, images, and tables, and is easily extensible for more document types. Advanced extraction is available via LLM (Large Language Model) clients.
 
 ---
 
 ## Features
 
-- 📄 **Convert PDF to Markdown**
+- 📄 **Convert PDF, DOCX, PPTX, and CSV to Markdown**
 - 🖼️ **Extract images** from documents (optional)
 - 📊 **Extract tables** from documents (optional)
-- 🤖 **LLM support** for advanced extraction (optional)
-- 🗂️ **Extensible**: Add support for DOCX, PPTX, CSV, and more
+- 🤖 **LLM support** for advanced extraction (PDF)
+- 🗂️ **Extensible**: Add support for more document types
 - 🏷️ **Custom output directory**
 
 ---
 
 ## Installation
 
-Clone the repository and install in editable mode:
-
 ```bash
-# Clone the repository
-$ git clone https://github.com/DocParseAI/doctomarkdown.git
-$ cd doctomarkdown
-
-# Install dependencies
-$ pip install -r requirements.txt
-
-# Install the package in editable mode
-$ pip install -e .
+$ pip install doctomarkdown
 ```
 
 > **Note:** Requires Python 3.10+
 
 ---
 
-## Usage Example
+## Usage Examples
 
 ### 1. Convert PDF to Markdown (No LLM)
 
@@ -54,7 +44,7 @@ from doctomarkdown import DocToMarkdown
 app = DocToMarkdown()
 
 result = app.convert_pdf_to_markdown(
-    filepath="sample_docs/sample.pdf",
+    filepath="sample_docs/Non-text-searchable.pdf",
     extract_images=True,
     extract_tables=True,
     output_path="markdown_output"
@@ -81,6 +71,16 @@ app = DocToMarkdown(
     llm_client=client_groq,
     llm_model='meta-llama/llama-4-scout-17b-16e-instruct'
 )
+
+result = app.convert_pdf_to_markdown(
+    filepath="sample_docs/Non-text-searchable.pdf",
+    extract_images=True,
+    extract_tables=True,
+    output_path="markdown_output"
+)
+
+for page in result.pages:
+    print(f"Page Number: {page.page_number} | Page Content: {page.page_content}")
 ```
 
 ### 3. Convert PDF to Markdown using Gemini LLM Client
@@ -99,28 +99,53 @@ vision_model = genai.GenerativeModel("gemini-1.5-flash")  # Choose your Gemini V
 app = DocToMarkdown(
     llm_client=vision_model
 )
+
+result = app.convert_pdf_to_markdown(
+    filepath="sample_docs/Non-text-searchable.pdf",
+    extract_images=True,
+    extract_tables=True,
+    output_path="markdown_output"
+)
+
+for page in result.pages:
+    print(f"Page Number: {page.page_number} | Page Content: {page.page_content}")
 ```
 
-### 4. Convert PDF to Markdown using AzureOpenAI Client
+### 4. Convert PDF to Markdown using Azure OpenAI Client
 
 ```python
+from doctomarkdown import DocToMarkdown
 from openai import AzureOpenAI
 from dotenv import load_dotenv
+import os
 load_dotenv()
 
-clinet = AzureOpenAI(
+client = AzureOpenAI(
     api_key=os.environ.get("AZURE_OPENAI_API_KEY"),
     azure_endpoint=os.environ.get("AZURE_OPENAI_ENDPOINT"),
     api_version=os.environ.get("AZURE_OPENAI_API_VERSION"),
 )
 
-app = DocToMarkdown(llm_client=clinet, 
-                    llm_model='gpt-4o')
+app = DocToMarkdown(
+    llm_client=client,
+    llm_model='gpt-4o'
+)
+
+result = app.convert_pdf_to_markdown(
+    filepath="sample_docs/Non-text-searchable.pdf",
+    extract_images=True,
+    extract_tables=True,
+    output_path="markdown_output"
+)
+
+for page in result.pages:
+    print(f"Page Number: {page.page_number} | Page Content: {page.page_content}")
 ```
 
-### 5. Convert PDF to Markdown using Ollama Client
+### 5. Convert PDF to Markdown using Ollama API Client
 
 ```python
+from doctomarkdown import DocToMarkdown
 from openai import OpenAI
 
 ollama_client = OpenAI(
@@ -128,61 +153,78 @@ ollama_client = OpenAI(
     api_key='ollama',
 )
 
-app = DocToMarkdown(llm_client=ollama_client, 
-                    llm_model='gemma3:4b')
+app = DocToMarkdown(llm_client=ollama_client, llm_model='gemma3:4b')
+result = app.convert_pdf_to_markdown(
+    filepath="sample_docs/Non-text-searchable.pdf",
+    extract_images=True,
+    extract_tables=True,
+    output_path="markdown_output"
+)
+
+for page in result.pages:
+    print(f"Page Number: {page.page_number} | Page Content: {page.page_content}")
 ```
 
 ---
 
-## Command Line Example
+### 6. Convert DOCX to Markdown
 
-You can also run the example script:
+```python
+from doctomarkdown import DocToMarkdown
+from dotenv import load_dotenv
+load_dotenv()
 
-```bash
-python examples/pdf_example.py
+app = DocToMarkdown()
+
+result = app.convert_docx_to_markdown(
+    filepath="sample_docs/Sampledoc-1.docx",
+    extract_images=True,
+    extract_tables=True,
+    output_path="markdown_output"
+)
+
+for page in result.pages:
+    print(f"Page Number: {page.page_number} | Page Content: {page.page_content}")
 ```
 
 ---
 
-## Supported File Types
+### 7. Convert PPTX to Markdown
 
-- PDF (more coming soon: DOCX, PPTX, CSV)
+```python
+from doctomarkdown import DocToMarkdown
+from dotenv import load_dotenv
+load_dotenv()
 
----
+app = DocToMarkdown()
 
-## File Structure
+result = app.convert_pptx_to_markdown(
+    filepath="sample_docs/sample-ppt-1.pptx",
+    extract_images=True,
+    extract_tables=True,
+    output_path="markdown_output"
+)
 
-```
-doctomarkdown/
-├── base.py
-├── factory.py
-├── __init__.py
-├── converters/
-│   ├── pdf_to_markdown.py
-│   ├── docx_to_markdown.py
-│   ├── pptx_to_markdown.py
-│   ├── csv_to_markdown.py
-│   └── __init__.py
-├── utils/
-│   ├── markdown_helpers.py
-│   └── __init__.py
-examples/
-├── pdf_example.py
-├── sample_docs/
-│   └── sample.pdf
-markdown_output/
-├── sample.md
-setup.py
-requirements.txt
-README.md
-LICENSE
+for page in result.pages:
+    print(f"Page Number: {page.page_number} | Page Content: {page.page_content}")
 ```
 
 ---
 
-## Contributing
+### 8. Convert CSV to Markdown
 
-Pull requests are welcome! For major changes, please open an issue first to discuss what you would like to change.
+```python
+from doctomarkdown import DocToMarkdown
+
+app = DocToMarkdown()
+
+result = app.convert_csv_to_markdown(
+    filepath="sample_docs/sample.csv",
+    extract_images=True,
+    extract_tables=True,
+    output_path="markdown_output"
+)
+```
 
 ---
 

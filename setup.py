@@ -26,6 +26,7 @@ setup(
     install_requires=[
         'PyMuPDF',
         'Pillow',
+        'pytesseract',
         'typing-extensions',
         'python-docx',
         'python-pptx',
@@ -40,4 +41,5 @@ setup(
         ],
     },
 )
+
 
