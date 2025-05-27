@@ -37,7 +37,6 @@ class DocxToMarkdown(BaseConverter):
     def generate_markdown_from_text(self, text: str) -> str:
         if hasattr(self.llm_client, "chat"):
             def call_llm():
-                # Call the LLM with a system prompt and the user content
                 return self.llm_client.chat.completions.create(
                     model=self.llm_model,
                     messages=[
