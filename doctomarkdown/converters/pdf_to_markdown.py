@@ -4,12 +4,13 @@ import fitz #PyMuPDF
 from doctomarkdown.utils.markdown_helpers import image_bytes_to_base64
 from doctomarkdown.utils.prompts import pdf_to_markdown_system_prompt,pdf_to_markdown_user_role_prompt
 from doctomarkdown.llmwrappers.GeminiWrapper import GeminiVisionWrapper
+from doctomarkdown.utils.image_to_markdown import image_to_markdown_llm, image_to_markdown_ocr
 import logging
 
 logger = logging.getLogger(__name__)
 
 class PdfToMarkdown(BaseConverter):
-    """Converter for PDF files to Markdown format using LLMs for image content extraction."""
+    """Converter for PDF files to Markdown format using LLMs for image content extraction or OCR fallback."""
     def extract_content(self):
         doc = fitz.open(self.filepath)
         use_llm = hasattr(self, 'llm_client') and self.llm_client is not None
@@ -25,48 +26,21 @@ class PdfToMarkdown(BaseConverter):
             page_content = text
             try:
                 if use_llm:
-                    llm_result = self.generate_markdown_from_image(base64_image)
+                    llm_result = image_to_markdown_llm(self.llm_client, self.llm_model, base64_image)
                     page_content = (
                         f"\n{llm_result}"
                     )
+                else:
+                    # Only use OCR if no text was found
+                    if not text:
+                        from PIL import Image
+                        mode = "RGB" if pix.n < 4 else "RGBA"
+                        img = Image.frombytes(mode, (pix.width, pix.height), pix.samples)
+                        page_content = image_to_markdown_ocr(img)
             except Exception as e:
-                logger.warning(f"LLM extraction failed for page {page_number}: {e}")
+                logger.warning(f"Extraction failed for page {page_number}: {e}")
             pages.append(PageResult(page_number, page_content))
             markdown_lines.append(f"## Page {page_number}\n\n{page_content}\n")
 
         self._markdown = "\n".join(markdown_lines)
         return pages
-    
-    def generate_markdown_from_image(self, base64_image: str) -> str:
-        if not self.llm_model and hasattr(self.llm_client, 'model_name') and "gemini" in self.llm_client.model_name:
-            from PIL import Image
-            import io
-            import base64
-            gemini_client = GeminiVisionWrapper(self.llm_client)
-            image_data = base64.b64decode(base64_image)
-            image = Image.open(io.BytesIO(image_data))
-            response = gemini_client.generate_content([
-                {"text": pdf_to_markdown_system_prompt()},
-                {"text": pdf_to_markdown_user_role_prompt()},
-                image
-            ])
-            return response.text
-        elif hasattr(self.llm_client, "chat"):
-            def call_groqai():
-                return self.llm_client.chat.completions.create(
-                    model=self.llm_model,
-                    messages=[
-                        {"role": "system", "content": pdf_to_markdown_system_prompt()},
-                        {
-                            "role": "user",
-                            "content": [
-                                {"type": "text", "text": pdf_to_markdown_user_role_prompt()},
-                                {"type": "image_url", "image_url": {"url": f"data:image/png;base64,{base64_image}"}}
-                            ]
-                        }
-                    ],
-                    temperature=0,
-                ).choices[0].message.content
-            return call_groqai()
-        else:
-            raise ValueError("Unsupported LLM client type.")

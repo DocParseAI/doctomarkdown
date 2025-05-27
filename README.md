@@ -64,7 +64,7 @@ for page in result.pages:
     print(f"Page Number: {page.page_number} | Page Content: {page.page_content}")
 ```
 
-### 2. Convert PDF to Markdown using Groq LLM
+### 2. Convert PDF to Markdown using Groq LLM Client
 
 ```python
 from groq import Groq
@@ -81,19 +81,9 @@ app = DocToMarkdown(
     llm_client=client_groq,
     llm_model='meta-llama/llama-4-scout-17b-16e-instruct'
 )
-
-result = app.convert_pdf_to_markdown(
-    filepath="sample_docs/sample.pdf",
-    extract_images=True,
-    extract_tables=True,
-    output_path="markdown_output"
-)
-
-for page in result.pages:
-    print(f"Page Number: {page.page_number} | Page Content: {page.page_content}")
 ```
 
-### 3. Convert PDF to Markdown using Gemini LLM
+### 3. Convert PDF to Markdown using Gemini LLM Client
 
 ```python
 from google import genai
@@ -109,16 +99,37 @@ vision_model = genai.GenerativeModel("gemini-1.5-flash")  # Choose your Gemini V
 app = DocToMarkdown(
     llm_client=vision_model
 )
+```
 
-result = app.convert_pdf_to_markdown(
-    filepath="sample_docs/sample.pdf",
-    extract_images=True,
-    extract_tables=True,
-    output_path="markdown_output"
+### 4. Convert PDF to Markdown using AzureOpenAI Client
+
+```python
+from openai import AzureOpenAI
+from dotenv import load_dotenv
+load_dotenv()
+
+clinet = AzureOpenAI(
+    api_key=os.environ.get("AZURE_OPENAI_API_KEY"),
+    azure_endpoint=os.environ.get("AZURE_OPENAI_ENDPOINT"),
+    api_version=os.environ.get("AZURE_OPENAI_API_VERSION"),
 )
 
-for page in result.pages:
-    print(f"Page Number: {page.page_number} | Page Content: {page.page_content}")
+app = DocToMarkdown(llm_client=clinet, 
+                    llm_model='gpt-4o')
+```
+
+### 5. Convert PDF to Markdown using Ollama Client
+
+```python
+from openai import OpenAI
+
+ollama_client = OpenAI(
+    base_url = 'http://localhost:11434/v1',
+    api_key='ollama',
+)
+
+app = DocToMarkdown(llm_client=ollama_client, 
+                    llm_model='gemma3:4b')
 ```
 
 ---
