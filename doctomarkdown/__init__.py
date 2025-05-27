@@ -20,6 +20,19 @@ class DocToMarkdown:
         return pdf_converter.convert()
 
     def convert_docx_to_markdown(self, filepath: str, extract_images: bool = False, extract_tables: bool = False, output_path: Optional[str] = None, **kwargs):
+        """
+        Convert a DOCX file to Markdown.
+
+        Args:
+            filepath (str): Path to the DOCX file to convert.
+            extract_images (bool, optional): If True, extract images from the DOCX file. Defaults to False.
+            extract_tables (bool, optional): If True, extract tables from the DOCX file. Defaults to False.
+            output_path (str, optional): If provided, save the Markdown output to this path.
+            **kwargs: Additional keyword arguments passed to the converter.
+
+        Returns:
+            ConversionResult: The result of the conversion, including Markdown content and any extracted assets.
+        """
         docx_converter = DocxToMarkdown(
             filepath=filepath,
             llm_client=self.llm_client,
