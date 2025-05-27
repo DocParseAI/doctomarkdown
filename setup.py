@@ -7,7 +7,7 @@ with open('README.md', encoding='utf-8') as f:
 
 setup(
     name='doctomarkdown',
-    version='0.1.1',
+    version='0.1.0',
     packages=find_packages(),
     author='docparseai',
     author_email='sayantanghosh.work@deloitte.com',
@@ -28,7 +28,7 @@ setup(
         'Pillow',
         'typing-extensions',
         'python-docx',
-        'pptx',
+        'python-pptx',
         'pandas',
         'tabulate'  # Required for pandas to_markdown
     ],

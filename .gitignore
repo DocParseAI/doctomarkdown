@@ -3,7 +3,12 @@ __pycache__/
 *.py[cod]
 *$py.class
 .venv/
-
+.pypirc
+./dist
+*.egg-info/
+*.pyc
+*.ps1
+*.sh
 # C extensions
 *.so
 
