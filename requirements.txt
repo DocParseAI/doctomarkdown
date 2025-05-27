@@ -2,7 +2,7 @@ PyMuPDF
 Pillow
 typing-extensions
 google-generativeai
-pptx
+python-pptx
 easyocr
 pytesseract
 python-docx

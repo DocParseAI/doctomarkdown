@@ -1,0 +1,30 @@
+[project]
+name = "doctomarkdown"
+version = "0.1.0"
+description = "Convert documents to Markdown"
+authors = [
+  { name = "docparseai", email = "sayantanghosh.work@deloitte.com" }
+]
+readme = "README.md"
+license = { file = "LICENSE" }
+requires-python = ">=3.10"
+dependencies = [
+    "PyMuPDF",
+    "Pillow",
+    "typing-extensions",
+    "python-docx",
+    "python-pptx",
+    "pandas",
+    "tabulate"
+]
+
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+package-dir = {"" = "."}
+
+[project.urls]
+"Homepage" = "https://github.com/DocParseAI/doctomarkdown"
+"Bug Tracker" = "https://github.com/DocParseAI/doctomarkdown/issues"
