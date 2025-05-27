@@ -1,6 +1,6 @@
 [project]
 name = "doctomarkdown"
-version = "0.1.0"
+version = "0.1.1"
 description = "Convert documents to Markdown"
 authors = [
   { name = "docparseai", email = "sayantanghosh.work@deloitte.com" }
