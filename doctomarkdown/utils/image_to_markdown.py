@@ -1,7 +1,10 @@
 from doctomarkdown.utils.prompts import pdf_to_markdown_system_prompt, pdf_to_markdown_user_role_prompt
 from doctomarkdown.llmwrappers.GeminiWrapper import GeminiVisionWrapper
+import numpy as np
+from PIL import Image
+import pytesseract
 
-def image_to_markdown(llm_client, llm_model, base64_image: str) -> str:
+def image_to_markdown_llm(llm_client, llm_model, base64_image: str) -> str:
     """
     Convert an image (base64-encoded) to markdown using the provided LLM client and model.
     Supports Gemini and Groq-style clients.
@@ -38,3 +41,14 @@ def image_to_markdown(llm_client, llm_model, base64_image: str) -> str:
         return call_groqai()
     else:
         raise ValueError("Unsupported LLM client type.")
+
+def image_to_markdown_ocr(img) -> str:
+    """
+    Convert an image to markdown text using OCR (pytesseract).
+    Accepts a PIL Image object.
+    """
+    import pytesseract
+    
+    # Use pytesseract for OCR
+    text = pytesseract.image_to_string(img)
+    return text.strip() if text.strip() else "[No text found by OCR]"

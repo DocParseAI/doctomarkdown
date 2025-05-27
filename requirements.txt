@@ -4,3 +4,5 @@ typing-extensions
 google-generativeai
 docx2python
 pptx
+easyocr
+pytesseract
