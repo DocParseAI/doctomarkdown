@@ -5,9 +5,7 @@ from docx2python import docx2python
 class DocxToMarkdown(BaseConverter):
     """Converter for DOCX files to Markdown format."""
     
-    def extract_content(self):
-        
-        
+    def extract_content(self):     
         doc = docx2python(self.filepath)
         pages = []
         markdown_lines = []
