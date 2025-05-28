@@ -1,4 +1,6 @@
 from doctomarkdown.base import BaseConverter, PageResult, ConversionResult
+from doctomarkdown.utils.markdown_helpers import html_to_markdown
+from doctomarkdown.utils.markdown_helpers import generate_markdown_from_text
 from bs4 import BeautifulSoup
 import requests
 import logging
@@ -40,13 +42,18 @@ class UrlToMarkdown(BaseConverter):
 
         # Convert HTML to Markdown, preserving formatting
         main_html = str(main_block) if main_block else ""
-        markdown_content = self.html_to_markdown(main_html)
+        markdown_content = html_to_markdown(main_html)
 
         # Optionally, use LLM for enhanced Markdown conversion
         use_llm = hasattr(self, 'llm_client') and self.llm_client is not None
         try:
-            if use_llm and hasattr(self, "generate_markdown_from_text"):
-                llm_result = self.generate_markdown_from_text(markdown_content)
+            if use_llm:
+                llm_result = generate_markdown_from_text(
+                    self.llm_client,
+                    self.llm_model,
+                    markdown_content,
+                    "You are an expert at converting web articles to Markdown, preserving all source formatting (headings, lists, code, tables, etc)."
+                )
                 markdown_content = f"\n{llm_result}"
         except Exception as e:
             logger.warning(f"LLM extraction failed for URL: {e}")
@@ -58,33 +65,3 @@ class UrlToMarkdown(BaseConverter):
         page_result = PageResult(page_number=1, page_content=markdown_full)
         self._markdown = markdown_full
         return [page_result]
-
-    def html_to_markdown(self, html: str) -> str:
-        try:
-            import html2text
-        except ImportError:
-            raise ImportError("Please install 'html2text' to preserve formatting: pip install html2text")
-        h = html2text.HTML2Text()
-        h.ignore_links = False
-        h.ignore_images = False
-        h.body_width = 0
-        h.protect_links = True
-        return h.handle(html)
-
-    def generate_markdown_from_text(self, text: str) -> str:
-        """
-        Use the LLM client to convert extracted text to enhanced Markdown.
-        """
-        if hasattr(self.llm_client, "chat"):
-            def call_llm():
-                return self.llm_client.chat.completions.create(
-                    model=self.llm_model,
-                    messages=[
-                        {"role": "system", "content": "You are an expert at converting web articles to Markdown, preserving all source formatting (headings, lists, code, tables, etc)."},
-                        {"role": "user", "content": text}
-                    ],
-                    temperature=0,
-                ).choices[0].message.content
-            return call_llm()
-        else:
-            raise ValueError("Unsupported LLM client type.")
