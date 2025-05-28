@@ -18,7 +18,7 @@
 - 📄 **Convert PDF, DOCX, PPTX, and CSV to Markdown**
 - 🖼️ **Extract images** from documents (optional)
 - 📊 **Extract tables** from documents (optional)
-- 🤖 **LLM support** for advanced extraction (PDF)
+- 🤖 **LLM support** : Supports AzureOpenAI, Groq, Gemini, OpenAI, Ollama
 - 🗂️ **Extensible**: Add support for more document types
 - 🏷️ **Custom output directory**
 
@@ -165,6 +165,31 @@ for page in result.pages:
     print(f"Page Number: {page.page_number} | Page Content: {page.page_content}")
 ```
 
+### 6. Convert PDF to Markdown using OpenAI LLM Client
+
+```python
+from openai import OpenAI
+from dotenv import load_dotenv
+load_dotenv()
+
+client = OpenAI(
+    api_key=os.environ.get("OPENAI_API_KEY"),
+)
+
+app = DocToMarkdown(llm_client=client, 
+                    llm_model='gpt-4o')
+
+result = app.convert_pdf_to_markdown(
+    filepath="sample_docs/sample-1.pdf",
+    extract_images=True,
+    extract_tables=True,
+    output_path="markdown_output"
+)
+
+for page in result.pages:
+    print(f"Page Number: {page.page_number} | Page Content: {page.page_content}")
+
+```
 ---
 
 ### 6. Convert DOCX to Markdown
