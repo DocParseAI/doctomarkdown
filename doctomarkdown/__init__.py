@@ -24,6 +24,8 @@ class DocToMarkdown:
             page_number (int): The number of pages in the pdf file.
             page_content (str): The content of the pdf file in Markdown format.
         """
+        if not filepath.lower().endswith('.pdf'):
+            raise ValueError("Unsupported file type for PDF conversion. Please provide a .pdf file.")
         pdf_converter = PdfToMarkdown(
             filepath=filepath,
             llm_client=self.llm_client,
@@ -51,6 +53,8 @@ class DocToMarkdown:
             page_number (int): The number of pages in the docx file.
             page_content (str): The content of the docx file in Markdown format.
         """
+        if not filepath.lower().endswith('.docx'):
+            raise ValueError("Unsupported file type for DOCX conversion. Please provide a .docx file.")
         docx_converter = DocxToMarkdown(
             filepath=filepath,
             llm_client=self.llm_client,
@@ -78,6 +82,8 @@ class DocToMarkdown:
             page_number (int): The number of pages in the PPTX file.
             page_content (str): The content of the PPTX file in Markdown format.
         """
+        if not filepath.lower().endswith('.pptx'):
+            raise ValueError("Unsupported file type for PPTX conversion. Please provide a .pptx file.")
         pptx_converter = PptxToMarkdown(
             filepath=filepath,
             llm_client=self.llm_client,
@@ -105,6 +111,8 @@ class DocToMarkdown:
             page_number (int): The number of pages in the CSV file.
             page_content (str): The content of the CSV file in Markdown format.
         """
+        if not filepath.lower().endswith('.csv'):
+            raise ValueError("Unsupported file type for CSV conversion. Please provide a .csv file.")
         csv_converter = CsvToMarkdown(
             filepath=filepath,
             extract_images=extract_images,

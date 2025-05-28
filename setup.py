@@ -10,7 +10,7 @@ setup(
     version='0.1.2',
     packages=find_packages(),
     author='docparseai',
-    author_email='sayantanghosh.work@deloitte.com',
+    author_email='sayantanghosh.work@gmail.com',
     description='Convert documents to Markdown',
     long_description=long_description,
     long_description_content_type='text/markdown',
