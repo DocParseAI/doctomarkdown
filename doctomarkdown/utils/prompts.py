@@ -33,3 +33,9 @@ def docx_to_markdown_user_role_prompt () -> str:
             "Preserve the hierarchy of information using appropriate markdown syntax: headings (#), subheadings (##), bold (**), lists (-), tables, etc. "
             "Include all numerical data, labels, notes, and even seemingly minor text. Do not skip anything. Do not make assumptions."
         )
+
+def html_to_markdown_system_role_prompt () -> str:
+    return (
+            "You are an expert web articles to Markdown convert engine. You must extract every detail from content text"
+            "including all text, tables, headings, labels, lists, values, units, footnotes, and layout formatting."
+        )

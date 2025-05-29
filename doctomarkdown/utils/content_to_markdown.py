@@ -52,7 +52,7 @@ def image_to_markdown_ocr(pix) -> str:
     text = pytesseract.image_to_string(img)
     return text.strip() if text.strip() else "[No text found by OCR]"
 
-def text_to_markdown_llm(llm_client, llm_model, raw_text):
+def text_to_markdown_llm(llm_client, llm_model, system_prompt, raw_text):
     # LLM function to convert docx file into markdown
     if hasattr(llm_client, "generate_content"):  # Gemini's method
         response = llm_client.generate_content(
@@ -66,9 +66,9 @@ def text_to_markdown_llm(llm_client, llm_model, raw_text):
         return llm_client.chat.completions.create(
             model=llm_model,
             messages=[
-                {"role": "system", "content": docx_to_markdown_system_role_prompt()},
+                {"role": "system", "content": system_prompt},
                 {"role": "user", "content": [
-                    {"type":"text", "text": docx_to_markdown_user_role_prompt()},
+                    # {"type":"text", "text": docx_to_markdown_user_role_prompt()},
                     {"type":"text", "text": raw_text}
                 ]}
             ],
