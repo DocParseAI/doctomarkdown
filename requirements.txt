@@ -4,5 +4,7 @@ typing-extensions
 google-generativeai
 python-pptx
 easyocr
+tesseract
 pytesseract
 python-docx
+pandas

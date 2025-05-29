@@ -199,7 +199,15 @@ from doctomarkdown import DocToMarkdown
 from dotenv import load_dotenv
 load_dotenv()
 
-app = DocToMarkdown()
+from groq import Groq
+
+
+client_groq = Groq(
+    # api_key=os.environ.get("GROQ_API_KEY")
+)
+
+app = DocToMarkdown(llm_client=client_groq, 
+                    llm_model='llama3-8b-8192')
 
 result = app.convert_docx_to_markdown(
     filepath="sample_docs/Sampledoc-1.docx",
