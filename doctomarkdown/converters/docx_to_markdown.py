@@ -1,4 +1,5 @@
 from doctomarkdown.base import BaseConverter, PageResult, ConversionResult
+from doctomarkdown.utils.markdown_helpers import generate_markdown_from_text
 from typing import Optional
 from docx import Document
 import logging
@@ -21,8 +22,13 @@ class DocxToMarkdown(BaseConverter):
        
         page_content = "\n\n".join(text)
         try:
-            if use_llm and hasattr(self, "generate_markdown_from_text"):
-                llm_result = self.generate_markdown_from_text(page_content)
+            if use_llm:
+                llm_result = generate_markdown_from_text(
+                    self.llm_client,
+                    self.llm_model,
+                    page_content,
+                    "You are an expert at converting DOCX content to Markdown."
+                )
                 page_content = f"\n{llm_result}"
         except Exception as e:
             logger.warning(f"LLM extraction failed for DOCX: {e}")
@@ -33,18 +39,3 @@ class DocxToMarkdown(BaseConverter):
 
         self._markdown = "\n".join(markdown_lines)
         return pages
-
-    def generate_markdown_from_text(self, text: str) -> str:
-        if hasattr(self.llm_client, "chat"):
-            def call_llm():
-                return self.llm_client.chat.completions.create(
-                    model=self.llm_model,
-                    messages=[
-                        {"role": "system", "content": "You are an expert at converting DOCX content to Markdown."},
-                        {"role": "user", "content": text}
-                    ],
-                    temperature=0,
-                ).choices[0].message.content
-            return call_llm()
-        else:
-            raise ValueError("Unsupported LLM client type.")
