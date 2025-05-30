@@ -263,24 +263,24 @@ result = app.convert_csv_to_markdown(
 
 ```python
 from doctomarkdown import DocToMarkdown
+from dotenv import load_dotenv
+load_dotenv()
 
-from groq import Groq
+app = DocToMarkdown()
 
-
-client_groq = Groq(
-    # api_key=os.environ.get("GROQ_API_KEY")
-)
-
-app = DocToMarkdown(llm_client=client_groq, 
-                    llm_model='meta-llama/llama-4-scout-17b-16e-instruct')
-
-
+# Convert Medium article
 result = app.convert_url_to_markdown(
-    urlPath:f"{url}",
+    urlpath="https://medium.com/the-ai-forum/build-a-local-reliable-rag-agent-using-crewai-and-groq-013e5d557bcd",
     extract_images=True,
     extract_tables=True,
     output_path="markdown_output"
 )
+
+# Display first 500 chars to preview
+for page in result.pages:
+    print(f"Page Number: {page.page_number}")
+    print(f"Content Preview: {page.page_content[:500]}...")
+    print(f"Total Length: {len(page.page_content)} characters")
 ```
 
 ---
