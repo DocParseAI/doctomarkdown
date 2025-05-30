@@ -3,8 +3,10 @@ Pillow
 typing-extensions
 google-generativeai
 easyocr
+tesseract
 pytesseract
 python-docx
+pandas
 python-pptx
 html2text
 beautifulsoup4

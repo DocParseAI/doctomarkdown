@@ -1,6 +1,5 @@
-from doctomarkdown.utils.prompts import pdf_to_markdown_system_prompt, pdf_to_markdown_user_role_prompt
+from doctomarkdown.utils.prompts import pdf_to_markdown_system_prompt, pdf_to_markdown_user_role_prompt,docx_to_markdown_system_role_prompt,docx_to_markdown_user_role_prompt
 from doctomarkdown.llmwrappers.GeminiWrapper import GeminiVisionWrapper
-import numpy as np
 from PIL import Image
 import pytesseract
 
@@ -42,13 +41,42 @@ def image_to_markdown_llm(llm_client, llm_model, base64_image: str) -> str:
     else:
         raise ValueError("Unsupported LLM client type.")
 
-def image_to_markdown_ocr(img) -> str:
+def image_to_markdown_ocr(pix) -> str:
     """
     Convert an image to markdown text using OCR (pytesseract).
     Accepts a PIL Image object.
     """
-    import pytesseract
-    
+    mode = "RGB" if pix.n < 4 else "RGBA"
+    img = Image.frombytes(mode, (pix.width, pix.height), pix.samples)
     # Use pytesseract for OCR
     text = pytesseract.image_to_string(img)
     return text.strip() if text.strip() else "[No text found by OCR]"
+
+def text_to_markdown_llm(llm_client, llm_model, system_prompt, raw_text):
+    # LLM function to convert docx file into markdown
+    if hasattr(llm_client, "generate_content"):  # Gemini's method
+        response = llm_client.generate_content(
+            [  
+                docx_to_markdown_system_role_prompt(),
+                raw_text
+            ]
+        )
+        return response.text
+    elif hasattr(llm_client.chat, "completions"):  # OpenAI-like fallback
+        return llm_client.chat.completions.create(
+            model=llm_model,
+            messages=[
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": [
+                    # {"type":"text", "text": docx_to_markdown_user_role_prompt()},
+                    {"type":"text", "text": raw_text}
+                ]}
+            ],
+            temperature=0,
+        ).choices[0].message.content
+    else:
+        raise ValueError("Unsupported LLM client")
+    
+def text_to_markdown_fallback(raw_text):
+    # Basic fallback for docx to markdown: just return as-is or wrap in code block
+    return f"```\n{raw_text}\n```"
