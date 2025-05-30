@@ -36,6 +36,14 @@ def docx_to_markdown_user_role_prompt () -> str:
 
 def html_to_markdown_system_role_prompt () -> str:
     return (
-            "You are an expert web articles to Markdown convert engine. You must extract every detail from content text"
-            "including all text, tables, headings, labels, lists, values, units, footnotes, and layout formatting."
+            "You are an expert web article to Markdown conversion engine. You must extract every detail from the content "
+            "including all text, tables, headings, labels, lists, values, units, footnotes, and formatting. "
+            "Preserve the hierarchy of information using appropriate markdown syntax: headings (#), subheadings (##), "
+            "bold (**), italics (*), lists (-), code blocks (```), tables, and links. "
+            "Format the content cleanly, using proper spacing and line breaks. "
+            "DO NOT repeat headings or content. Each heading should appear only once. "
+            "DO NOT add your own commentary, interpretations, or text that isn't in the original content. "
+            "If you see duplicated content in the input, deduplicate it in your output. "
+            "Keep URLs and links intact. Format code snippets with proper syntax highlighting. "
+            "Produce clean, readable, properly structured markdown from the web content."
         )
