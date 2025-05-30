@@ -1,6 +1,6 @@
 [project]
 name = "doctomarkdown"
-version = "0.1.5"
+version = "0.1.6"
 description = "Convert PDF, DOCX, PPTX, Medium, Wikipedia and CSV documents to Markdown. Extracts text, images, and tables. Supports LLM-based extraction."
 authors = [
   { name = "docparseai", email = "sayantanghosh.work@gmail.com" }
