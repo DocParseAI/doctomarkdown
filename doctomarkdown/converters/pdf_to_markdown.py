@@ -1,10 +1,8 @@
 from doctomarkdown.base import BaseConverter, PageResult, ConversionResult
-from typing import Optional
 import fitz #PyMuPDF
 from doctomarkdown.utils.markdown_helpers import image_bytes_to_base64
-from doctomarkdown.utils.prompts import pdf_to_markdown_system_prompt,pdf_to_markdown_user_role_prompt
-from doctomarkdown.llmwrappers.GeminiWrapper import GeminiVisionWrapper
-from doctomarkdown.utils.image_to_markdown import image_to_markdown_llm, image_to_markdown_ocr
+from doctomarkdown.llmwrappers.ExceptionWrapper import handleException
+from doctomarkdown.utils.content_to_markdown import image_to_markdown_llm, image_to_markdown_ocr
 import logging
 
 logger = logging.getLogger(__name__)
@@ -12,7 +10,13 @@ logger = logging.getLogger(__name__)
 class PdfToMarkdown(BaseConverter):
     """Converter for PDF files to Markdown format using LLMs for image content extraction or OCR fallback."""
     def extract_content(self):
-        doc = fitz.open(self.filepath)
+        try:
+            doc = fitz.open(self.filepath)
+            if not doc.is_pdf:
+                raise Exception("Use convert_pdf_to_markdown to convert pdf files only")
+        except Exception as e:
+            logger.error(f"Unable to process the pdf file {e}")      # will log error if filepath is wrong or corrupt file  
+        
         use_llm = hasattr(self, 'llm_client') and self.llm_client is not None
 
         pages = []
@@ -26,19 +30,25 @@ class PdfToMarkdown(BaseConverter):
             page_content = text
             try:
                 if use_llm:
-                    llm_result = image_to_markdown_llm(self.llm_client, self.llm_model, base64_image)
+                    llm_result = handleException(
+                        max_retry=2,
+                        fun=image_to_markdown_llm,
+                        fallback_fun=image_to_markdown_ocr,
+                        llm_client=self.llm_client,
+                        llm_model=self.llm_model,
+                        base64_image=base64_image,
+                        pix=pix,
+                        context="pdf"
+                    )
                     page_content = (
                         f"\n{llm_result}"
                     )
                 else:
                     # Only use OCR if no text was found
                     if not text:
-                        from PIL import Image
-                        mode = "RGB" if pix.n < 4 else "RGBA"
-                        img = Image.frombytes(mode, (pix.width, pix.height), pix.samples)
-                        page_content = image_to_markdown_ocr(img)
+                        page_content = image_to_markdown_ocr(pix)
             except Exception as e:
-                logger.warning(f"Extraction failed for page {page_number}: {e}")
+                logger.warning(f"Extraction failed for page {page_number} : {e}")
             pages.append(PageResult(page_number, page_content))
             markdown_lines.append(f"## Page {page_number}\n\n{page_content}\n")
 

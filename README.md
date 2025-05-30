@@ -199,7 +199,15 @@ from doctomarkdown import DocToMarkdown
 from dotenv import load_dotenv
 load_dotenv()
 
-app = DocToMarkdown()
+from groq import Groq
+
+
+client_groq = Groq(
+    # api_key=os.environ.get("GROQ_API_KEY")
+)
+
+app = DocToMarkdown(llm_client=client_groq, 
+                    llm_model='llama3-8b-8192')
 
 result = app.convert_docx_to_markdown(
     filepath="sample_docs/Sampledoc-1.docx",
@@ -245,6 +253,30 @@ app = DocToMarkdown()
 
 result = app.convert_csv_to_markdown(
     filepath="sample_docs/sample.csv",
+    extract_images=True,
+    extract_tables=True,
+    output_path="markdown_output"
+)
+```
+
+### 8. Convert URL to Markdown
+
+```python
+from doctomarkdown import DocToMarkdown
+
+from groq import Groq
+
+
+client_groq = Groq(
+    # api_key=os.environ.get("GROQ_API_KEY")
+)
+
+app = DocToMarkdown(llm_client=client_groq, 
+                    llm_model='meta-llama/llama-4-scout-17b-16e-instruct')
+
+
+result = app.convert_url_to_markdown(
+    urlPath:f"{url}",
     extract_images=True,
     extract_tables=True,
     output_path="markdown_output"
