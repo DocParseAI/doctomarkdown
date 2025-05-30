@@ -1,9 +1,9 @@
 [project]
 name = "doctomarkdown"
-version = "0.1.2"
+version = "0.1.4"
 description = "Convert PDF, DOCX, PPTX, and CSV documents to Markdown. Extracts text, images, and tables. Supports LLM-based extraction."
 authors = [
-  { name = "docparseai", email = "sayantanghosh.work@deloitte.com" }
+  { name = "docparseai", email = "sayantanghosh.work@gmail.com" }
 ]
 readme = "README.md"
 license = { file = "LICENSE" }
@@ -15,7 +15,12 @@ dependencies = [
     "python-docx",
     "python-pptx",
     "pandas",
-    "tabulate"
+    "tabulate",
+    'html2text',
+    'beautifulsoup4',
+    'google-generativeai',
+    'easyocr',
+    'pytesseract'
 ]
 
 [project.urls]

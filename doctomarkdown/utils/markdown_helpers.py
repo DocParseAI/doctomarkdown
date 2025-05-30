@@ -1,6 +1,7 @@
 import base64
 from typing import BinaryIO
 import html2text
+from bs4 import BeautifulSoup
 
 def image_file_to_base64(image_path: str) -> str:
     """
