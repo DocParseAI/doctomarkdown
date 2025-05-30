@@ -21,16 +21,39 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-
-      - uses: actions/setup-python@v5
         with:
-          python-version: "3.x"
+          fetch-depth: 0  # Fetch all history for tags
 
-      - name: Build release distributions
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+
+      - name: Install dependencies
         run: |
-          # NOTE: put your own distribution build steps here.
-          python -m pip install build
+          python -m pip install --upgrade pip
+          pip install build wheel twine
+          pip install -e .
+
+      - name: Extract version from tag
+        id: get_version
+        run: |
+          VERSION=${GITHUB_REF#refs/tags/v}
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+          echo "Version extracted: $VERSION"
+
+      - name: Update version in setup.py
+        run: |
+          sed -i "s/version='[^']*'/version='$VERSION'/g" setup.py
+          cat setup.py | grep version=
+
+      - name: Build package
+        run: |
           python -m build
+
+      - name: Display distribution files
+        run: |
+          ls -la dist/
 
       - name: Upload distributions
         uses: actions/upload-artifact@v4
@@ -46,13 +69,9 @@ jobs:
       # IMPORTANT: this permission is mandatory for trusted publishing
       id-token: write
 
-    # Dedicated environments with protections for publishing are strongly recommended.
-    # For more information, see: https://docs.github.com/en/actions/deployment/targeting-different-environments/using-environments-for-deployment#deployment-protection-rules
     environment:
       name: pypi
       url: https://pypi.org/project/doctomarkdown/
-      # ALTERNATIVE: if your GitHub Release name is the PyPI project version string
-      # url: https://pypi.org/project/doctomarkdown/${{ github.event.release.name }}
 
     steps:
       - name: Retrieve release distributions
@@ -61,7 +80,12 @@ jobs:
           name: release-dists
           path: dist/
 
+      - name: Display distribution files before publishing
+        run: |
+          ls -la dist/
+
       - name: Publish release distributions to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
           packages-dir: dist/
+          verbose: true
