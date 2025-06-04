@@ -5,6 +5,10 @@
 
 <h1 align="center">Doctomarkdown</h1>
 
+![PyPI - Install - Static](https://img.shields.io/badge/pip_install-doctomarkdown-blue)
+![PyPI - Version](https://img.shields.io/pypi/v/doctomarkdown.svg)
+![PyPI - Downloads](https://img.shields.io/pypi/dm/doctomarkdown)
+
 ---
 
 # Doctomarkdown
