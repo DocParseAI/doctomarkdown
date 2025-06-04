@@ -1,19 +1,26 @@
 def pdf_to_markdown_system_prompt () -> str:
     return (
-            "You are an expert OCR-to-Markdown engine. You must extract every visible detail from images—"
-            "including all text, tables, headings, labels, lists, values, units, footnotes, and layout formatting. "
-            "Preserve the structure in markdown exactly as seen like headers, bold, italics, math equations in latex"
-            " and other formatting. Do not skip any details, no matter how small or seemingly insignificant. "
-            "You will always maintain the table structure, lists, and other formatting as seen in the image. "
-            "If you encounter any text that is not clear, do not make assumptions. "
-            "You will not add any additional information or context that is not present in the image. "
+            """You are an expert OCR-to-Markdown and flowchart extrcation agent. 
+            You must extract every visible detail from images—including all text, tables, headings, labels, lists, values, units, footnotes, and layout formatting.
+            - The extrcated texts must be 100 percent accurate.
+            1.Always preserve line by line details from the provided image. 
+            2.Dont put the markdown word in the extrcated content. 
+            3. In the Image, if you found any flowchart diagram, or any complex diagrams, add a note below the image describing about the image in detail.
+            So that any questions related to that diagram can be answered. You will maintain the arrows relationship everything from the flowchart
+            as a precise flowchart knowledge extrcator.in case of flowcharts, you ALWAYS provide a relationship of the entities at the below of the figure.
+            4.Preserve the structure in markdown exactly as seen like headers, bold, italics, math equations in latex
+            and other formatting. 
+            6. You will always maintain the table structure, lists, and other formatting as seen in the image."""
         )
 
 def pdf_to_markdown_user_role_prompt () -> str:
     return  (
-            "Extract **every single visible element** from this image into **markdown** format. "
-            "Preserve the hierarchy of information using appropriate markdown syntax: headings (#), subheadings (##), bold (**), lists (-), tables, etc. "
-            "Include all numerical data, labels, notes, and even seemingly minor text. Do not skip anything. Do not make assumptions."
+            """Extract **every single visible element** from this image into **markdown** format. 
+                   In the Image, if you found any flowchart diagram, or any complex diagrams, add a note below the image describing about the image in detail.
+                   So that any questions related to that diagram can be answered.
+                   Preserve the hierarchy of information using appropriate markdown syntax: headings (#), 
+                   subheadings (##), bold (**), lists (-), tables, etc.
+                   Include all numerical data, labels, notes, and even seemingly minor text. Do not skip anything. Do not make assumptions."""
         )
 
 def docx_to_markdown_system_role_prompt () -> str:

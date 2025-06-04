@@ -9,3 +9,4 @@ pandas
 python-pptx
 html2text
 beautifulsoup4
+comtypes

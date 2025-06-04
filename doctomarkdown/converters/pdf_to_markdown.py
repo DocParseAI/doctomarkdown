@@ -11,11 +11,13 @@ class PdfToMarkdown(BaseConverter):
     """Converter for PDF files to Markdown format using LLMs for image content extraction or OCR fallback."""
     def extract_content(self):
         try:
+            logger.info(f"[INFO] Starting PDF extraction for: {self.filepath}")
             doc = fitz.open(self.filepath)
             if not doc.is_pdf:
                 raise Exception("Use convert_pdf_to_markdown to convert pdf files only")
         except Exception as e:
-            logger.error(f"Unable to process the pdf file {e}")      # will log error if filepath is wrong or corrupt file  
+            logger.error(f"[FAILURE] Unable to process the pdf file {self.filepath}: {e}")
+            raise
         
         use_llm = hasattr(self, 'llm_client') and self.llm_client is not None
 
@@ -30,6 +32,7 @@ class PdfToMarkdown(BaseConverter):
             page_content = text
             try:
                 if use_llm:
+                    logger.info(f"[INFO] Using LLM extraction for page {page_number} of {self.filepath}")
                     llm_result = handleException(
                         max_retry=2,
                         fun=image_to_markdown_llm,
@@ -43,14 +46,18 @@ class PdfToMarkdown(BaseConverter):
                     page_content = (
                         f"\n{llm_result}"
                     )
+                    logger.info(f"[SUCCESS] LLM extraction successful for page {page_number} of {self.filepath}")
                 else:
                     # Only use OCR if no text was found
                     if not text:
+                        logger.info(f"[INFO] No text found, using OCR for page {page_number} of {self.filepath}")
                         page_content = image_to_markdown_ocr(pix)
+                        logger.info(f"[SUCCESS] OCR extraction successful for page {page_number} of {self.filepath}")
             except Exception as e:
-                logger.warning(f"Extraction failed for page {page_number} : {e}")
+                logger.warning(f"[FAILURE] Extraction failed for page {page_number} of {self.filepath}: {e}")
             pages.append(PageResult(page_number, page_content))
             markdown_lines.append(f"## Page {page_number}\n\n{page_content}\n")
 
         self._markdown = "\n".join(markdown_lines)
+        logger.info(f"[SUCCESS] PDF extraction completed for: {self.filepath}")
         return pages
