@@ -34,7 +34,8 @@ setup(
         'tabulate',
         'html2text',
         'beautifulsoup4',
-        'comtypes'
+        'comtypes',
+        'docx2pdf'
     ],
     extras_require={
         'llm': [

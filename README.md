@@ -51,7 +51,8 @@ result = app.convert_pdf_to_markdown(
     filepath="sample_docs/Non-text-searchable.pdf",
     extract_images=True,
     extract_tables=True,
-    output_path="markdown_output"
+    output_path="markdown_output",
+    output_type="markdown"  # or 'text' for .txt output
 )
 
 for page in result.pages:
@@ -80,7 +81,8 @@ result = app.convert_pdf_to_markdown(
     filepath="sample_docs/Non-text-searchable.pdf",
     extract_images=True,
     extract_tables=True,
-    output_path="markdown_output"
+    output_path="markdown_output",
+    output_type="markdown"  # or 'text' for .txt output
 )
 
 for page in result.pages:
@@ -108,7 +110,8 @@ result = app.convert_pdf_to_markdown(
     filepath="sample_docs/Non-text-searchable.pdf",
     extract_images=True,
     extract_tables=True,
-    output_path="markdown_output"
+    output_path="markdown_output",
+    output_type="markdown"  # or 'text' for .txt output
 )
 
 for page in result.pages:
@@ -139,7 +142,8 @@ result = app.convert_pdf_to_markdown(
     filepath="sample_docs/Non-text-searchable.pdf",
     extract_images=True,
     extract_tables=True,
-    output_path="markdown_output"
+    output_path="markdown_output",
+    output_type="markdown"  # or 'text' for .txt output
 )
 
 for page in result.pages:
@@ -162,7 +166,8 @@ result = app.convert_pdf_to_markdown(
     filepath="sample_docs/Non-text-searchable.pdf",
     extract_images=True,
     extract_tables=True,
-    output_path="markdown_output"
+    output_path="markdown_output",
+    output_type="markdown"  # or 'text' for .txt output
 )
 
 for page in result.pages:
@@ -187,7 +192,8 @@ result = app.convert_pdf_to_markdown(
     filepath="sample_docs/sample-1.pdf",
     extract_images=True,
     extract_tables=True,
-    output_path="markdown_output"
+    output_path="markdown_output",
+    output_type="markdown"  # or 'text' for .txt output
 )
 
 for page in result.pages:
@@ -217,7 +223,8 @@ result = app.convert_docx_to_markdown(
     filepath="sample_docs/Sampledoc-1.docx",
     extract_images=True,
     extract_tables=True,
-    output_path="markdown_output"
+    output_path="markdown_output",
+    output_type="markdown"  # or 'text' for .txt output
 )
 
 for page in result.pages:
@@ -239,7 +246,8 @@ result = app.convert_pptx_to_markdown(
     filepath="sample_docs/sample-ppt-1.pptx",
     extract_images=True,
     extract_tables=True,
-    output_path="markdown_output"
+    output_path="markdown_output",
+    output_type="markdown"  # or 'text' for .txt output
 )
 
 for page in result.pages:
@@ -259,7 +267,8 @@ result = app.convert_csv_to_markdown(
     filepath="sample_docs/sample.csv",
     extract_images=True,
     extract_tables=True,
-    output_path="markdown_output"
+    output_path="markdown_output",
+    output_type="markdown"  # or 'text' for .txt output
 )
 ```
 
@@ -277,7 +286,8 @@ result = app.convert_url_to_markdown(
     urlpath="https://medium.com/the-ai-forum/build-a-local-reliable-rag-agent-using-crewai-and-groq-013e5d557bcd",
     extract_images=True,
     extract_tables=True,
-    output_path="markdown_output"
+    output_path="markdown_output",
+    output_type="markdown"  # or 'text' for .txt output
 )
 
 # Display first 500 chars to preview

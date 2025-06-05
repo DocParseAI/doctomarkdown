@@ -10,3 +10,5 @@ python-pptx
 html2text
 beautifulsoup4
 comtypes
+langchain-openai
+docx2pdf
