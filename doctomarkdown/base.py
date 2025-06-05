@@ -21,6 +21,7 @@ class BaseConverter(ABC):
         llm_client: Optional[object] = None,
         llm_model: Optional[str] = None,
         llm_prompt: Optional[str] = None,
+        output_type: str = 'markdown',
         **kwargs: Any
     ):
         self.filepath = filepath
@@ -30,6 +31,7 @@ class BaseConverter(ABC):
         self.llm_client = llm_client
         self.llm_model = llm_model
         self.llm_prompt = llm_prompt
+        self.output_type = output_type
         self.kwargs = kwargs #for future extension
     
     @abstractmethod
@@ -38,8 +40,9 @@ class BaseConverter(ABC):
         pass
 
     def save_markdown(self, content: str) -> str:
-        """Save the markdown content to a file and return the output path"""
-        filename = os.path.splitext(os.path.basename(self.filepath))[0] + ".md"
+        """Save the markdown/text content to a file and return the output path"""
+        ext = '.md' if getattr(self, 'output_type', 'markdown') == 'markdown' else '.txt'
+        filename = os.path.splitext(os.path.basename(self.filepath))[0] + ext
         output_dir = self.output_path or os.getcwd()
         os.makedirs(output_dir, exist_ok=True)
 
@@ -50,7 +53,7 @@ class BaseConverter(ABC):
     
     def convert(self):
         pages = self.extract_content()  # List[PageResult]
-        # Save markdown only if output_path is provided
+        # Save markdown/text only if output_path is provided
         if self.output_path:
             self.save_markdown(self._markdown)
         return ConversionResult(pages)

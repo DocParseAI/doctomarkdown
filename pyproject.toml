@@ -21,6 +21,7 @@ dependencies = [
     'google-generativeai',
     'pytesseract',
     'comtypes',
+    'docx2pdf',
 ]
 
 [project.urls]

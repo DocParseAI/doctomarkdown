@@ -4,6 +4,9 @@ import pandas as pd
 class CsvToMarkdown(BaseConverter):
     """Converter for CSV files to Markdown format."""
     
+    def __init__(self, filepath, extract_images=False, extract_tables=False, output_path=None, output_type='markdown', **kwargs):
+        super().__init__(filepath=filepath, extract_images=extract_images, extract_tables=extract_tables, output_path=output_path, output_type=output_type, **kwargs)
+
     def extract_content(self):
         
         df = pd.read_csv(self.filepath)

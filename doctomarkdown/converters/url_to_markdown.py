@@ -15,6 +15,9 @@ logger = logging.getLogger(__name__)
 class UrlToMarkdown(BaseConverter):
     """Converter for web URLs (e.g., Wikipedia, Medium) to Markdown format using LLM or fallback."""
 
+    def __init__(self, filepath, extract_images=False, extract_tables=False, output_path=None, llm_client=None, llm_model=None, output_type='markdown', **kwargs):
+        super().__init__(filepath=filepath, extract_images=extract_images, extract_tables=extract_tables, output_path=output_path, llm_client=llm_client, llm_model=llm_model, output_type=output_type, **kwargs)
+
     def extract_content(self):
         url = self.filepath
         headers = {
