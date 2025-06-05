@@ -7,6 +7,9 @@ import shutil
 class PptxToMarkdown(BaseConverter):
     """Converter for PPTX files to Markdown format."""
     
+    def __init__(self, filepath, extract_images=False, extract_tables=False, output_path=None, llm_client=None, llm_model=None, output_type='markdown', **kwargs):
+        super().__init__(filepath=filepath, extract_images=extract_images, extract_tables=extract_tables, output_path=output_path, llm_client=llm_client, llm_model=llm_model, output_type=output_type, **kwargs)
+
     def extract_content(self):
         temp_dir = None
         try:
@@ -47,7 +50,8 @@ class PptxToMarkdown(BaseConverter):
                         slide_content.append(shape.text.strip())
                 page_content = "\n".join(slide_content)
                 pages.append(PageResult(page_number, page_content))
-                markdown_lines.append(f"## Slide {page_number}\n\n{page_content}\n")
+                page_content = f"Page Number: {page_number}\nPage Content:\n{page_content}\n"
+                markdown_lines.append(page_content)
             self._markdown = "\n".join(markdown_lines)
             print(f"[SUCCESS] Extraction is successful via standard PPTX logic for file: {self.filepath}")
             return pages

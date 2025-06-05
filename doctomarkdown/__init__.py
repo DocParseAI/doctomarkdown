@@ -11,7 +11,7 @@ class DocToMarkdown:
         self.llm_client = llm_client
         self.llm_model = llm_model
 
-    def convert_pdf_to_markdown(self, filepath: str, extract_images: bool = False, extract_tables: bool = False, output_path: Optional[str] = None, **kwargs):
+    def convert_pdf_to_markdown(self, filepath: str, extract_images: bool = False, extract_tables: bool = False, output_path: Optional[str] = None, output_type: str = 'markdown', **kwargs):
         """
         Convert a PDF file to Markdown.
         Args:
@@ -19,6 +19,7 @@ class DocToMarkdown:
             extract_images (bool, optional): If True, extract images from the PDF file. Defaults to False.
             extract_tables (bool, optional): If True, extract tables from the PDF file. Defaults to False.
             output_path (str, optional): If provided, save the Markdown output to this path.
+            output_type (str, optional): The type of output, e.g., 'markdown' or 'html'. Defaults to 'markdown'.
             **kwargs: Additional keyword arguments passed to the converter.
         
         Returns:
@@ -33,11 +34,12 @@ class DocToMarkdown:
             extract_images=extract_images,
             extract_tables=extract_tables,
             output_path=output_path,
+            output_type=output_type,
             **kwargs
         )
         return pdf_converter.convert()
 
-    def convert_docx_to_markdown(self, filepath: str, extract_images: bool = False, extract_tables: bool = False, output_path: Optional[str] = None, **kwargs):
+    def convert_docx_to_markdown(self, filepath: str, extract_images: bool = False, extract_tables: bool = False, output_path: Optional[str] = None, output_type: str = 'markdown', **kwargs):
         """
         Convert a DOCX file to Markdown.
 
@@ -46,6 +48,7 @@ class DocToMarkdown:
             extract_images (bool, optional): If True, extract images from the DOCX file. Defaults to False.
             extract_tables (bool, optional): If True, extract tables from the DOCX file. Defaults to False.
             output_path (str, optional): If provided, save the Markdown output to this path.
+            output_type (str, optional): The type of output, e.g., 'markdown' or 'html'. Defaults to 'markdown'.
             **kwargs: Additional keyword arguments passed to the converter.
 
         Returns:
@@ -60,11 +63,12 @@ class DocToMarkdown:
             extract_images=extract_images,
             extract_tables=extract_tables,
             output_path=output_path,
+            output_type=output_type,
             **kwargs
         )
         return docx_converter.convert()
     
-    def convert_pptx_to_markdown(self, filepath: str, extract_images: bool = False, extract_tables: bool = False, output_path: Optional[str] = None, **kwargs):
+    def convert_pptx_to_markdown(self, filepath: str, extract_images: bool = False, extract_tables: bool = False, output_path: Optional[str] = None, output_type: str = 'markdown', **kwargs):
         """
         Convert a PPTX file to Markdown.
         
@@ -73,6 +77,7 @@ class DocToMarkdown:
             extract_images (bool, optional): If True, extract images from the PPTX file. Defaults to False.
             extract_tables (bool, optional): If True, extract tables from the PPTX file. Defaults to False.
             output_path (str, optional): If provided, save the Markdown output to this path.
+            output_type (str, optional): The type of output, e.g., 'markdown' or 'html'. Defaults to 'markdown'.
             **kwargs: Additional keyword arguments passed to the converter.
         
         Returns:
@@ -87,11 +92,12 @@ class DocToMarkdown:
             extract_images=extract_images,
             extract_tables=extract_tables,
             output_path=output_path,
+            output_type=output_type,
             **kwargs
         )
         return pptx_converter.convert()
     
-    def convert_url_to_markdown(self, urlpath: str, extract_images: bool = False, extract_tables: bool = False, output_path: Optional[str] = None, **kwargs):
+    def convert_url_to_markdown(self, urlpath: str, extract_images: bool = False, extract_tables: bool = False, output_path: Optional[str] = None, output_type: str = 'markdown', **kwargs):
         """
         Convert a web URL (such as a Wikipedia or Medium article) to Markdown.
 
@@ -104,6 +110,7 @@ class DocToMarkdown:
             extract_images (bool, optional): If True, extract images from the web page. Defaults to False.
             extract_tables (bool, optional): If True, extract tables from the web page. Defaults to False.
             output_path (str, optional): If provided, save the Markdown output to this path.
+            output_type (str, optional): The type of output, e.g., 'markdown' or 'html'. Defaults to 'markdown'.
             **kwargs: Additional keyword arguments passed to the converter.
 
         Returns:
@@ -116,11 +123,12 @@ class DocToMarkdown:
             extract_images=extract_images,
             extract_tables=extract_tables,
             output_path=output_path,
+            output_type=output_type,
             **kwargs
         )
         return url_converter.convert()
 
-    def convert_csv_to_markdown(self, filepath: str, extract_images: bool = False, extract_tables: bool = False, output_path: Optional[str] = None, **kwargs):
+    def convert_csv_to_markdown(self, filepath: str, extract_images: bool = False, extract_tables: bool = False, output_path: Optional[str] = None, output_type: str = 'markdown', **kwargs):
         """
         Convert a CSV file to Markdown.
         
@@ -129,6 +137,7 @@ class DocToMarkdown:
             extract_images (bool, optional): If True, extract images from the CSV file. Defaults to False.
             extract_tables (bool, optional): If True, extract tables from the CSV file. Defaults to False.
             output_path (str, optional): If provided, save the Markdown output to this path.
+            output_type (str, optional): The type of output, e.g., 'markdown' or 'html'. Defaults to 'markdown'.
             **kwargs: Additional keyword arguments passed to the converter.
         
         Returns:
@@ -141,6 +150,7 @@ class DocToMarkdown:
             extract_images=extract_images,
             extract_tables=extract_tables,
             output_path=output_path,
+            output_type=output_type,
             **kwargs
         )
         return csv_converter.convert()
