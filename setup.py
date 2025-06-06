@@ -7,7 +7,7 @@ with open('README.md', encoding='utf-8') as f:
 
 setup(
     name='doctomarkdown',
-    version='0.1.9',
+    version='0.2.0',
     packages=find_packages(),
     author='docparseai',
     author_email='sayantanghosh.work@gmail.com',
