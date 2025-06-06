@@ -3,6 +3,7 @@ from doctomarkdown.converters.docx_to_markdown import DocxToMarkdown
 from doctomarkdown.converters.pptx_to_markdown import PptxToMarkdown
 from doctomarkdown.converters.url_to_markdown import UrlToMarkdown
 from doctomarkdown.converters.csv_to_markdown import CsvToMarkdown
+from doctomarkdown.converters.image_to_markdown import ImageToMarkdownConverter
 
 from typing import Optional
 
@@ -154,3 +155,32 @@ class DocToMarkdown:
             **kwargs
         )
         return csv_converter.convert()
+    
+    def convert_image_to_markdown(self, filepath: str, extract_images: bool = False, extract_tables: bool = False, output_path: Optional[str] = None, output_type: str = 'markdown', **kwargs):
+        """
+        Convert an image file to Markdown.
+        
+        Args:
+            filepath (str): Path to the image file to convert.
+            extract_images (bool, optional): If True, extract images from the image file. Defaults to False.
+            extract_tables (bool, optional): If True, extract tables from the image file. Defaults to False.
+            output_path (str, optional): If provided, save the Markdown output to this path.
+            output_type (str, optional): The type of output, e.g., 'markdown' or 'html'. Defaults to 'markdown'.
+            **kwargs: Additional keyword arguments passed to the converter.
+        
+        Returns:
+            ConversionResult:
+            page_number (int): The number of pages in the image file.
+            page_content (str): The content of the image file in Markdown format.
+        """
+        image_converter = ImageToMarkdownConverter(
+            filepath=filepath,
+            extract_images=extract_images,
+            extract_tables=extract_tables,
+            output_path=output_path,
+            llm_client=self.llm_client,
+            llm_model=self.llm_model,
+            output_type=output_type,
+            **kwargs
+        )
+        return image_converter.convert()

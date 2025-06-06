@@ -1,4 +1,4 @@
-from doctomarkdown.utils.prompts import docx_to_markdown_system_role_prompt,html_to_markdown_system_role_prompt
+from doctomarkdown.utils.prompts import docx_to_markdown_system_role_prompt,html_to_markdown_system_role_prompt,image_to_markdown_system_role_prompt
 import logging
 logger = logging.getLogger(__name__)
 def handleException(max_retry, fun,fallback_fun, **kwargs):
@@ -23,6 +23,12 @@ def handleException(max_retry, fun,fallback_fun, **kwargs):
                 llm_model=kwargs.get("llm_model"),
                 system_prompt=html_to_markdown_system_role_prompt(),
                 raw_text=kwargs.get("content")
+            )        
+        elif kwargs.get("context") == "image":
+            return fun(
+                llm_client=kwargs.get("llm_client"),
+                llm_model=kwargs.get("llm_model"),
+                base64_image=kwargs.get("base64_image")
             )
 
     except Exception as e:
@@ -33,6 +39,8 @@ def handleException(max_retry, fun,fallback_fun, **kwargs):
             if fallback_fun:
                 logger.warning('Fall back to the fallback function')
                 if kwargs.get("context") == "pdf":
+                    return fallback_fun(kwargs.get("pix"))
+                elif kwargs.get("context") == "image":
                     return fallback_fun(kwargs.get("pix"))
                 elif kwargs.get("context") == "docx":
                     return fallback_fun(kwargs.get("raw_text"))
