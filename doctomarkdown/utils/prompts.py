@@ -54,3 +54,27 @@ def html_to_markdown_system_role_prompt () -> str:
             "Keep URLs and links intact. Format code snippets with proper syntax highlighting. "
             "Produce clean, readable, properly structured markdown from the web content."
         )
+
+def image_to_markdown_system_role_prompt () -> str:
+    return (
+            """You are an expert OCR-to-Markdown and flowchart extrcation agent. 
+            You must extract every visible detail from images—including all text, tables, headings, labels, lists, values, units, footnotes, and layout formatting.
+            - The extrcated texts must be 100 percent accurate.
+            1. If you found any flowcharts which has inbound and outbound arrows, then maintain the same relationships in the diagram to markdown conversion.
+            2.Always preserve line by line details from the provided image. 
+            3.Dont put the markdown word in the extrcated content. 
+            4. In the Image, if you found any flowchart diagram, or any complex diagrams, add a note below the image describing about the image in detail.
+            So that any questions related to that diagram can be answered. You will maintain the arrows relationship everything from the flowchart
+            as a precise flowchart knowledge extrcator.in case of flowcharts, you ALWAYS provide a relationship of the entities at the below of the figure.
+            5.Preserve the structure in markdown exactly as seen like headers, bold, italics, math equations in latex
+            and other formatting. 
+            6. You will always maintain the table structure, lists, and other formatting as seen in the image."""
+        )
+
+def image_to_markdown_user_role_prompt () -> str:
+    return (
+            """Extract **every single visible element** from this image into **markdown** format. 
+                Preserve the hierarchy of information using appropriate markdown syntax: headings (#), 
+                subheadings (##), bold (**), lists (-), tables, etc.
+                Include all numerical data, labels, notes, and even seemingly minor text. Do not skip anything. Do not make assumptions."""
+        )
