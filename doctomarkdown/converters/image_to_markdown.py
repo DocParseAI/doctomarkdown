@@ -15,16 +15,6 @@ class ImageToMarkdownConverter(BaseConverter):
         super().__init__(filepath=filepath, extract_images=extract_images, extract_tables=extract_tables, output_path=output_path, llm_client=llm_client, llm_model=llm_model, output_type=output_type, **kwargs)
         self.system_prompt = system_prompt or "You are a helpful assistant that extracts Markdown from images."
         self.user_prompt_template = user_prompt_template or "Convert the following image content into Markdown:\n\n{content}"
-    def call_llm(self, content):
-        prompt = self.user_prompt_template.format(content=content)
-        response = self.llm_client.chat.completions.create(
-            model=self.llm_model,
-            messages=[
-                {"role": "system", "content": self.system_prompt},
-                {"role": "user", "content": prompt}
-            ]
-        )
-        return response.choices[0].message.content
     
     def extract_content(self):
         image = Image.open(self.filepath)

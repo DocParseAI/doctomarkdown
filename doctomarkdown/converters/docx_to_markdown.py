@@ -73,20 +73,4 @@ class DocxToMarkdown(BaseConverter):
         finally:
             shutil.rmtree(temp_dir)
 
-    def call_llm(self, content):
-        if not self.llm_client or not self.llm_model:
-            raise ValueError("LLM client or model not provided.")
-        
-        prompt = self.user_prompt_template.format(content=content)
-        try:
-            response = self.llm_client.chat.completions.create(
-                model=self.llm_model,
-                messages=[
-                    {"role": "system", "content": self.system_prompt},
-                    {"role": "user", "content": prompt}
-                ]
-            )
-            return response.choices[0].message.content
-        except Exception as e:
-            logger.error(f"[LLM ERROR] Failed to call LLM: {e}")
-            raise
+    

@@ -15,18 +15,6 @@ class PdfToMarkdown(BaseConverter):
         self.system_prompt = system_prompt or "You are a helpful assistant that converts documents into Markdown."
         self.user_prompt_template = user_prompt_template or "Convert the following content into Markdown:\n\n{content}"
 
-    def call_llm(self, content):
-        """Use the provided LLM client to generate a response based on custom prompts."""
-        prompt = self.user_prompt_template.format(content=content)
-        response = self.llm_client.chat.completions.create(
-            model=self.llm_model,
-            messages=[
-                {"role": "system", "content": self.system_prompt},
-                {"role": "user", "content": prompt}
-            ]
-        )
-        return response.choices[0].message.content
-
     def extract_content(self):
         try:
             logger.info(f"[INFO] Starting PDF extraction for: {self.filepath}")

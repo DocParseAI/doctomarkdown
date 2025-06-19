@@ -26,18 +26,6 @@ class PptxToMarkdown(BaseConverter):
         self.system_prompt = system_prompt or "You are a helpful assistant that converts slide content into Markdown."
         self.user_prompt_template = user_prompt_template or "Convert the following presentation content into Markdown:\n\n{content}"
 
-    def call_llm(self, content):
-        """Call the LLM with the configured prompt template."""
-        prompt = self.user_prompt_template.format(content=content)
-        response = self.llm_client.chat.completions.create(
-            model=self.llm_model,
-            messages=[
-                {"role": "system", "content": self.system_prompt},
-                {"role": "user", "content": prompt}
-            ]
-        )
-        return response.choices[0].message.content
-
     def extract_content(self):
         temp_dir = None
 

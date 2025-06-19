@@ -9,16 +9,6 @@ class CsvToMarkdown(BaseConverter):
         super().__init__(filepath=filepath, extract_images=extract_images, extract_tables=extract_tables, output_path=output_path, output_type=output_type, **kwargs)
         self.system_prompt = system_prompt or "You are a helpful assistant that converts CSV files into Markdown."
         self.user_prompt_template = user_prompt_template or "Convert the following CSV data into a nicely formatted Markdown table:\n\n{content}"
-    def call_llm(self, content):
-        prompt = self.user_prompt_template.format(content=content)
-        response = self.llm_client.chat.completions.create(
-            model=self.llm_model,
-            messages=[
-                {"role": "system", "content": self.system_prompt},
-                {"role": "user", "content": prompt}
-            ]
-        )
-        return response.choices[0].message.content
     
     def extract_content(self):
         

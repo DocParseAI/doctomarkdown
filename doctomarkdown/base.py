@@ -21,6 +21,8 @@ class BaseConverter(ABC):
         llm_client: Optional[object] = None,
         llm_model: Optional[str] = None,
         llm_prompt: Optional[str] = None,
+        system_prompt: Optional[str] = None,
+        user_prompt_template: Optional[str] = None,
         output_type: str = 'markdown',
         **kwargs: Any
     ):
@@ -31,6 +33,8 @@ class BaseConverter(ABC):
         self.llm_client = llm_client
         self.llm_model = llm_model
         self.llm_prompt = llm_prompt
+        self.system_prompt = system_prompt or "You are a helpful assistant that summarizes content into markdown."
+        self.user_prompt_template = user_prompt_template or "Summarize the following content:\n\n{content}"
         self.output_type = output_type
         self.kwargs = kwargs #for future extension
     
@@ -50,11 +54,30 @@ class BaseConverter(ABC):
         with open(output_file, "w", encoding="utf-8") as f:
             f.write(content)
         return output_file
-    
-    def convert(self):
-        pages = self.extract_content()  # List[PageResult]
-        # Save markdown/text only if output_path is provided
-        if self.output_path:
-            self.save_markdown(self._markdown)
-        return ConversionResult(pages)
+    def call_llm(self, content: str) -> Optional[str]:
+        if not self.llm_client or not self.llm_model:
+            return None
+        try:
+            prompt = self.user_prompt_template.format(content=content)
+            response = self.llm_client.chat.completions.create(
+                model=self.llm_model,
+                messages=[
+                    {"role": "system", "content": self.system_prompt},
+                    {"role": "user", "content": prompt}
+                ]
+            )
+            return response.choices[0].message.content.strip()
+        except Exception as e:
+            print(f"[LLM ERROR] Failed to get response: {e}")
+            return None
+        
+    def convert(self) -> ConversionResult:
+        pages = self.extract_content()
+        full_content = "\n\n".join([p.page_content for p in pages])
+        self._markdown = full_content  # Save raw extracted text/markdown
 
+        llm_summary = self.call_llm(full_content)
+        if self.output_path:
+            self.save_markdown(full_content)
+
+        return ConversionResult(pages=pages, llm_summary=llm_summary)
