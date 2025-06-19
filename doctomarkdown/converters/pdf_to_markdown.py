@@ -9,8 +9,23 @@ logger = logging.getLogger(__name__)
 
 class PdfToMarkdown(BaseConverter):
     """Converter for PDF files to Markdown format using LLMs for image content extraction or OCR fallback."""
-    def __init__(self, filepath, extract_images=False, extract_tables=False, output_path=None, llm_client=None, llm_model=None, output_type='markdown', **kwargs):
+    def __init__(self, filepath, extract_images=False, extract_tables=False, output_path=None, llm_client=None, llm_model=None, system_prompt=None,
+        user_prompt_template=None, output_type='markdown', **kwargs):
         super().__init__(filepath=filepath, extract_images=extract_images, extract_tables=extract_tables, output_path=output_path, llm_client=llm_client, llm_model=llm_model, output_type=output_type, **kwargs)
+        self.system_prompt = system_prompt or "You are a helpful assistant that converts documents into Markdown."
+        self.user_prompt_template = user_prompt_template or "Convert the following content into Markdown:\n\n{content}"
+
+    def call_llm(self, content):
+        """Use the provided LLM client to generate a response based on custom prompts."""
+        prompt = self.user_prompt_template.format(content=content)
+        response = self.llm_client.chat.completions.create(
+            model=self.llm_model,
+            messages=[
+                {"role": "system", "content": self.system_prompt},
+                {"role": "user", "content": prompt}
+            ]
+        )
+        return response.choices[0].message.content
 
     def extract_content(self):
         try:

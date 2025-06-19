@@ -4,13 +4,31 @@ import pandas as pd
 class CsvToMarkdown(BaseConverter):
     """Converter for CSV files to Markdown format."""
     
-    def __init__(self, filepath, extract_images=False, extract_tables=False, output_path=None, output_type='markdown', **kwargs):
+    def __init__(self, filepath, extract_images=False, extract_tables=False, output_path=None, system_prompt=None,
+        user_prompt_template=None,output_type='markdown', **kwargs):
         super().__init__(filepath=filepath, extract_images=extract_images, extract_tables=extract_tables, output_path=output_path, output_type=output_type, **kwargs)
-
+        self.system_prompt = system_prompt or "You are a helpful assistant that converts CSV files into Markdown."
+        self.user_prompt_template = user_prompt_template or "Convert the following CSV data into a nicely formatted Markdown table:\n\n{content}"
+    def call_llm(self, content):
+        prompt = self.user_prompt_template.format(content=content)
+        response = self.llm_client.chat.completions.create(
+            model=self.llm_model,
+            messages=[
+                {"role": "system", "content": self.system_prompt},
+                {"role": "user", "content": prompt}
+            ]
+        )
+        return response.choices[0].message.content
+    
     def extract_content(self):
         
         df = pd.read_csv(self.filepath)
         markdown_content = df.to_markdown(index=False)
+        if self.llm_client and self.llm_model:
+            try:
+                markdown_content = self.call_llm(markdown_content)
+            except Exception as e:
+                print(f"[WARNING] LLM post-processing failed: {e}")
         page_result = PageResult(page_number=1, page_content=markdown_content)
         self._markdown = markdown_content
         return [page_result]
