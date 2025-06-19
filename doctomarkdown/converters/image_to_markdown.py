@@ -10,8 +10,11 @@ import base64
 logger = logging.getLogger(__name__)
 
 class ImageToMarkdownConverter(BaseConverter):
-    def __init__(self, filepath, extract_images=False, extract_tables=False, output_path=None, llm_client=None, llm_model=None, output_type='markdown', **kwargs):
+    def __init__(self, filepath, extract_images=False, extract_tables=False, output_path=None, llm_client=None, llm_model=None, system_prompt=None,
+        user_prompt_template=None, output_type='markdown', **kwargs):
         super().__init__(filepath=filepath, extract_images=extract_images, extract_tables=extract_tables, output_path=output_path, llm_client=llm_client, llm_model=llm_model, output_type=output_type, **kwargs)
+        self.system_prompt = system_prompt or "You are a helpful assistant that extracts Markdown from images."
+        self.user_prompt_template = user_prompt_template or "Convert the following image content into Markdown:\n\n{content}"
     
     def extract_content(self):
         image = Image.open(self.filepath)
@@ -43,6 +46,12 @@ class ImageToMarkdownConverter(BaseConverter):
             else:
                 # Use OCR directly if no LLM is provided
                 page_content = image_to_markdown_ocr(image)
+            if use_llm and page_content.strip():
+                try:
+                    page_content = self.call_llm(page_content)
+                except Exception as e:
+                    logger.warning(f"[FAILURE] LLM post-processing failed for image {self.filepath}: {e}")
+
         except Exception as e:
             logger.error(f"[ERROR] Extraction failed for image {self.filepath}: {e}")
             page_content = "[Extraction failed]"

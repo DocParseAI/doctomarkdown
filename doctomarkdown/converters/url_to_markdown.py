@@ -15,8 +15,10 @@ logger = logging.getLogger(__name__)
 class UrlToMarkdown(BaseConverter):
     """Converter for web URLs (e.g., Wikipedia, Medium) to Markdown format using LLM or fallback."""
 
-    def __init__(self, filepath, extract_images=False, extract_tables=False, output_path=None, llm_client=None, llm_model=None, output_type='markdown', **kwargs):
+    def __init__(self, filepath, extract_images=False, extract_tables=False, output_path=None, llm_client=None, llm_model=None,system_prompt=None, user_prompt_template=None, output_type='markdown', **kwargs):
         super().__init__(filepath=filepath, extract_images=extract_images, extract_tables=extract_tables, output_path=output_path, llm_client=llm_client, llm_model=llm_model, output_type=output_type, **kwargs)
+        self.system_prompt = system_prompt or html_to_markdown_system_role_prompt()
+        self.user_prompt_template = user_prompt_template or "Convert the following webpage into Markdown:\n\n{content}"
 
     def extract_content(self):
         url = self.filepath
@@ -94,23 +96,28 @@ class UrlToMarkdown(BaseConverter):
 
         # Check if we have LLM capability and if so, process the first 1000 characters
         use_llm = hasattr(self, 'llm_client') and self.llm_client is not None
-        
-        if use_llm:
-            chunk = markdown_content[:8000]
+        if use_llm and markdown_content.strip():
             try:
-                result = handleException(
-                    max_retry=2,
-                    fun=text_to_markdown_llm,
-                    fallback_fun=text_to_markdown_fallback,
-                    llm_client=self.llm_client,
-                    llm_model=self.llm_model,
-                    system_prompt=html_to_markdown_system_role_prompt(),
-                    raw_text=chunk,
-                    context="url"
-                )
-                markdown_content = result + '\n' + markdown_content[1000:]
+                markdown_content = self.call_llm(markdown_content)
             except Exception as e:
-                logger.warning(f"LLM extraction failed for URL chunk: {e}")
+                logger.warning(f"[FAILURE] LLM post-processing failed for URL: {e}")
+
+        # if use_llm:
+        #     chunk = markdown_content[:8000]
+        #     try:
+        #         result = handleException(
+        #             max_retry=2,
+        #             fun=text_to_markdown_llm,
+        #             fallback_fun=text_to_markdown_fallback,
+        #             llm_client=self.llm_client,
+        #             llm_model=self.llm_model,
+        #             system_prompt=html_to_markdown_system_role_prompt(),
+        #             raw_text=chunk,
+        #             context="url"
+        #         )
+        #         markdown_content = result + '\n' + markdown_content[1000:]
+            # except Exception as e:
+            #     logger.warning(f"LLM extraction failed for URL chunk: {e}")
         
         # Ensure markdown is never empty
         if not markdown_content.strip():
