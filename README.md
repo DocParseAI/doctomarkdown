@@ -6,9 +6,7 @@
 <h1 align="center">🚀 Doctomarkdown</h1>
 
 <p align="center">
-    <a href="https://pypi.org/project/doctomarkdown/">
-        <img src="https://img.shields.io/pypi/v/doctomarkdown.svg?label=Latest%20Release&logo=pypi&logoColor=white" alt="PyPI Version"/>
-    </a>
+    <a href="https://pypi.org/project/doctomarkdown/"><img src="https://img.shields.io/pypi/v/doctomarkdown.svg?label=Latest%20Release&logo=pypi&logoColor=white" alt="PyPI Version"/></a>
     <img src="https://img.shields.io/badge/pip%20install-doctomarkdown-blue?logo=python&logoColor=white" alt="PyPI - Install"/>
     <img src="https://img.shields.io/pypi/dm/doctomarkdown?label=Downloads&logo=download&logoColor=white" alt="PyPI - Downloads"/>
     <img src="https://img.shields.io/github/license/docparseai/doctomarkdown?label=License&logo=github" alt="License"/>
